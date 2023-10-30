@@ -102,9 +102,6 @@ class WishlistService extends TransactionBaseService {
         const wishlist = await this.retrieve(id);
 
         Object.assign(wishlist, data);
-
-
-        console.log("wishlist", wishlist);
         
 
         const { id: wishlistId } = await wishlistRepository.save(wishlist);
