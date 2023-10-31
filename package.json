@@ -47,6 +47,7 @@
     "medusa-payment-manual": "^1.0.24",
     "medusa-payment-phonepe": "^1.1.46",
     "medusa-payment-stripe": "^6.0.5",
+    "medusa-plugin-meilisearch": "^2.0.10",
     "medusa-plugin-wishlist": "^1.1.43",
     "prism-react-renderer": "^2.0.4",
     "react-router-dom": "^6.17.0",

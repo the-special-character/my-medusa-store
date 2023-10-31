@@ -49,6 +49,27 @@ class WishlistService extends TransactionBaseService {
     );
   }
 
+  async retrieveByCustomerId(customer_id: string, config?: FindConfig<Wishlist>): Promise<Wishlist> {
+    return await this.atomicPhase_(
+      async (transactionManager: EntityManager) => {
+        const wishlistRepository = transactionManager.withRepository(
+          this.wishlistRepository_
+        );
+
+        const query = buildQuery(
+          {
+            customer_id,
+          },
+          config
+        );
+
+        return await wishlistRepository.findOne(query);
+      }
+    );
+  }
+
+
+
   async create(
     payload: Pick<Wishlist, "region_id" | "customer_id">
   ): Promise<Wishlist> {
