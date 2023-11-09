@@ -27,7 +27,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const manager: EntityManager = req.scope.resolve("manager");
   const products = await manager.transaction(async (transactionManager) => {
     const category_id = req.query?.category_id;
-    let filters: ProductSelector = {
+    let filters = {
       //   title: Like("%Flashcards%"),
       // category_id,
     };
@@ -61,17 +61,12 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       ],
       //@ts-ignore
       where: {
+        categories: {
+          // Using the ANY operator to check if both category IDs are in the array
+          // $all: ['pcat_01HDGAWHWEHNWDBMS3K0SSJ0RY', 'pcat_01HDGAQ2W6Q0S6VCERXM4BQW91'],
+        },
         // ...(order && { order }),
-        ...(to && {
-          variants: {
-            prices: {
-              amount: Between(from, to),
-            },
-          },
-        }),
-        // categories: {
-        //   id: ,
-        // },
+        
       },
     });
     console.log(products.length);

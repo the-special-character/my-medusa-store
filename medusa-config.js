@@ -33,9 +33,9 @@ const DATABASE_URL =
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
-const BACKEND_URL = process.env.BACKEND_URL || "localhost:9000";
-const ADMIN_URL = process.env.ADMIN_URL || "localhost:7000";
-const STORE_URL = process.env.STORE_URL || "localhost:3000";
+const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:9000";
+const ADMIN_URL = process.env.ADMIN_URL || "http://localhost:7001";
+const STORE_URL = process.env.STORE_URL || "http://localhost:3000";
 
 const GoogleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const GoogleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
@@ -87,6 +87,17 @@ const plugins = [
     },
   },
   {
+    resolve: `medusa-plugin-payu`,
+    options: {
+      url: 'https://test.payu.in',
+      posId: '2Ysfa1dz',
+      currency: "INR",
+      clientId: '84f104fbfe4352fa161a39f622fecd585227f8b76f5e350a66dfe2fb0831b0f7',
+      clientSecret: '05b042fb93959f898bf41e7c2db6385947de6fe7553ec6b30c834f654e99cc85',
+      serverIp: '::1'
+    },
+  },
+  {
     resolve: `medusa-plugin-meilisearch`,
     options: {
       // config object passed when creating an instance of the MeiliSearch client
@@ -95,7 +106,6 @@ const plugins = [
         apiKey: process.env.MEILISEARCH_API_KEY,
       },
       settings: {
-        // index name
         products: {
           // MeiliSearch's setting options to be set on a particular index
           searchableAttributes: ["title", "description", "variant_sku"],
@@ -106,9 +116,13 @@ const plugins = [
             "thumbnail",
             "handle",
           ],
-          primaryKey: "id",
           transformer: (product) => ({
-            id: product.id,
+            id: product.id, 
+            title: product.title, 
+            description: product.description, 
+            variant_sku: product.variant_sku, 
+            thumbnail: product.thumbnail, 
+            handle: product.handle
             // other attributes...
           }),
         },
@@ -119,7 +133,7 @@ const plugins = [
     resolve: "medusa-plugin-auth",
     /** @type {import('medusa-plugin-auth').AuthOptions} */
     options: {
-      // strict: "all", // or "none" or "store" or "admin"
+      strict: "all", // or "none" or "store" or "admin"
       google: {
         clientID: GoogleClientId,
         clientSecret: GoogleClientSecret,
