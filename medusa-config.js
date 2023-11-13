@@ -94,7 +94,8 @@ const plugins = [
       currency: "INR",
       clientId: '84f104fbfe4352fa161a39f622fecd585227f8b76f5e350a66dfe2fb0831b0f7',
       clientSecret: '05b042fb93959f898bf41e7c2db6385947de6fe7553ec6b30c834f654e99cc85',
-      serverIp: '::1'
+      serverIp: '127.0.0.1',
+      serverUrl: STORE_URL
     },
   },
   {

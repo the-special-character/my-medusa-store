@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "medusa-backend",
+      name: "learning-dino-backend",
       script: "npm",
       args: "start",
     },
