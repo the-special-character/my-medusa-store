@@ -13,9 +13,11 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     async (transactionManager) => {
       return await productReviewService
         .withTransaction(transactionManager)
-        .retrieve(req.params.id);
+        .retrieve(req.params.productId);
     }
   );
 
-  res.status(200).json({ productReview });
+  res.status(200).json({
+    productReview,
+  });
 }
