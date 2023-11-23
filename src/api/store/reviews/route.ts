@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
-import ProductReviewService from "src/services/product-review";
+import ProductReviewService from "../../../services/product-review";
 import { EntityManager } from "typeorm";
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
@@ -41,4 +41,16 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     productReview,
   });
 
+}
+
+export async function getAllProducts(){
+  try {
+    const response = await fetch(`http://localhost:9000/store/reviews`)
+    const res = await response.json()
+    console.log({res});
+    
+    return res
+  } catch (error) {
+    console.log({error})
+  }
 }
