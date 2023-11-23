@@ -11,6 +11,8 @@ import { Max, Min } from "class-validator";
 
 import { generateEntityId } from "@medusajs/medusa/dist/utils";
 
+export type ReviewStatus = "pending" | "approved" | "declined";
+
 @Entity()
 export class ProductReview extends BaseEntity {
   @Index()
@@ -39,6 +41,13 @@ export class ProductReview extends BaseEntity {
 
   @Column({ nullable: false })
   content: string;
+
+  @Column({
+    type: "enum",
+    enum: ["pending", "approved", "declined"],
+    default: "pending",
+  })
+  status: ReviewStatus;
 
   @BeforeInsert()
   private beforeInsert(): void {

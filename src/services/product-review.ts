@@ -4,7 +4,6 @@ import {
   buildQuery,
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
-import { Wishlist } from "src/models/wishlist";
 import { ProductReviewRepository } from "src/repositories/product-review";
 import { ProductReview } from "src/models/product-review";
 

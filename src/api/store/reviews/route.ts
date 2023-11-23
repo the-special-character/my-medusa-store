@@ -7,9 +7,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       "productReviewService"
     );
 
-    console.log("Medusa API");
-
-  
     const manager: EntityManager = req.scope.resolve("manager");
   
     const productReview = await manager.transaction(
