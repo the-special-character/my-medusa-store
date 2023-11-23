@@ -1,4 +1,4 @@
-import { BaseEntity, Customer, Product } from "@medusajs/medusa";
+import { BaseEntity, Customer, Product, SoftDeletableEntity } from "@medusajs/medusa";
 import {
   BeforeInsert,
   Column,
@@ -14,7 +14,7 @@ import { generateEntityId } from "@medusajs/medusa/dist/utils";
 export type ReviewStatus = "pending" | "approved" | "declined";
 
 @Entity()
-export class ProductReview extends BaseEntity {
+export class ProductReview extends SoftDeletableEntity {
   @Index()
   @Column({ type: "varchar", nullable: true })
   product_id: string;
@@ -43,11 +43,10 @@ export class ProductReview extends BaseEntity {
   content: string;
 
   @Column({
-    type: "enum",
-    enum: ["pending", "approved", "declined"],
-    default: "pending",
+    default: false,
+    nullable: false
   })
-  status: ReviewStatus;
+  is_deleted: boolean;
 
   @BeforeInsert()
   private beforeInsert(): void {
