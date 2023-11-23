@@ -12,6 +12,10 @@ type InjectedDependencies = {
   productReviewRepository: typeof ProductReviewRepository;
 };
 
+class FilterableProductReviewsProps {
+  
+}
+
 class ProductReviewService extends TransactionBaseService {
   protected readonly productReviewRepository_: typeof ProductReviewRepository;
 
@@ -35,6 +39,25 @@ class ProductReviewService extends TransactionBaseService {
           {
             product_id,
           },
+          config
+        );
+
+        return await productReviewRepository.find(query);
+      }
+    );
+  }
+  async find(
+    selector: FilterableProductReviewsProps = {},
+    config?: FindConfig<ProductReview>
+  ): Promise<ProductReview[]> {
+    return await this.atomicPhase_(
+      async (transactionManager: EntityManager) => {
+        const productReviewRepository = transactionManager.withRepository(
+          this.productReviewRepository_
+        );
+
+        const query = buildQuery(
+          selector,
           config
         );
 

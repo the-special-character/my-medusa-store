@@ -3,22 +3,42 @@ import ProductReviewService from "src/services/product-review";
 import { EntityManager } from "typeorm";
 
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-    const productReviewService: ProductReviewService = req.scope.resolve(
-      "productReviewService"
-    );
+  const productReviewService: ProductReviewService = req.scope.resolve(
+    "productReviewService"
+  );
 
-    const manager: EntityManager = req.scope.resolve("manager");
-  
-    const productReview = await manager.transaction(
-      async (transactionManager) => {
-        console.log("req.body", req.body);
-        
+  const manager: EntityManager = req.scope.resolve("manager");
 
-        return await productReviewService
-          .withTransaction(transactionManager)
-          .create(req.body);
-      }
-    );
-  
-    res.status(200).json({ productReview });
-  }
+  const productReview = await manager.transaction(
+    async (transactionManager) => {
+      console.log("req.body", req.body);
+
+
+      return await productReviewService
+        .withTransaction(transactionManager)
+        .create(req.body);
+    }
+  );
+
+  res.status(200).json({ productReview });
+}
+export async function GET(req: MedusaRequest, res: MedusaResponse) {
+  const productReviewService: ProductReviewService = req.scope.resolve(
+    "productReviewService"
+  );
+
+  const manager: EntityManager = req.scope.resolve("manager");
+
+  const productReview = await manager.transaction(
+    async (transactionManager) => {
+      return productReviewService
+        .withTransaction(transactionManager)
+        .find()
+    }
+  );
+
+  res.status(200).json({
+    productReview,
+  });
+
+}
