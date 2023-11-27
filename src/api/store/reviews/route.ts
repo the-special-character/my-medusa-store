@@ -43,15 +43,3 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     productReview,
   });
 }
-
-export async function getAllProducts() {
-  try {
-    const response = await fetch(`http://localhost:9000/store/reviews`);
-    const res = await response.json();
-    console.log({ res });
-
-    return res;
-  } catch (error) {
-    console.log({ error });
-  }
-}

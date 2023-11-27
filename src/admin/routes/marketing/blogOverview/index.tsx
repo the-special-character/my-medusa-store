@@ -35,7 +35,11 @@ import {
 } from "medusa-react";
 import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getDateComparisonOperatorFromSearchParams, getStringArrayFromSearchParams, getStringFromSearchParams } from "../../../utils/search-param-utils";
+import {
+  getDateComparisonOperatorFromSearchParams,
+  getStringArrayFromSearchParams,
+  getStringFromSearchParams,
+} from "../../../utils/search-param-utils";
 // import { PriceListStatus } from "../forms/price-list-details-form"
 // import { PriceListNew } from "../new"
 
@@ -94,7 +98,6 @@ const PriceListTableFilters = () => {
 };
 
 const PriceListOverview = () => {
-
   const [searchParams] = useSearchParams();
 
   const navigate = useNavigate();
@@ -312,7 +315,6 @@ const PriceListTableRowActions = ({ row }: PriceListTableRowActionsProps) => {
   const prompt = usePrompt();
 
   const navigate = useNavigate();
-
 
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
