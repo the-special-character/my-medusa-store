@@ -5,5 +5,10 @@ module.exports = {
       script: "npm",
       args: "start",
     },
+    {
+      name: "learning-dino-admin",
+      script: "npm",
+      args: "run start:server",
+    },
   ],
 };
