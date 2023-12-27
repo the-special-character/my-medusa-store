@@ -52,6 +52,8 @@
     "medusa-plugin-auth": "^1.7.0",
     "medusa-plugin-meilisearch": "^2.0.10",
     "medusa-plugin-payu": "^0.1.44",
+    "medusa-plugin-ses": "^2.2.3",
+    "medusa-plugin-smtp": "^1.2.0",
     "medusa-plugin-wishlist": "^1.1.43",
     "prism-react-renderer": "^2.0.4",
     "react-router-dom": "^6.17.0",
