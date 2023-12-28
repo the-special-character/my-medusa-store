@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "clean": "cross-env ./node_modules/.bin/rimraf dist",
-    "build": "cross-env npm run clean && npm run build:server && npm run build:admin",
+    "build": "NODE_ENV=production cross-env npm run clean && npm run build:server && npm run build:admin",
     "build:server": "cross-env npm run clean && tsc -p tsconfig.server.json",
     "build:admin": "cross-env medusa-admin build --deployment",
     "watch": "cross-env tsc --watch",
@@ -52,6 +52,8 @@
     "medusa-plugin-auth": "^1.8.3",
     "medusa-plugin-meilisearch": "^2.0.10",
     "medusa-plugin-payu": "^0.1.47",
+    "medusa-plugin-ses": "^2.2.3",
+    "medusa-plugin-smtp": "^1.2.0",
     "medusa-plugin-wishlist": "^1.1.43",
     "prism-react-renderer": "^2.3.1",
     "react-router-dom": "^6.21.1",

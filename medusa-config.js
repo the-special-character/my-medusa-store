@@ -212,6 +212,30 @@ const plugins = [
       },
     },
   },
+  {
+    resolve: `medusa-plugin-ses`,
+    options: {
+      access_key_id: process.env.SES_ACCESS_KEY_ID,
+      secret_access_key: process.env.SES_SECRET_ACCESS_KEY,
+      region: process.env.SES_REGION,
+      from: process.env.SES_FROM,
+      enable_endpoint: "42",
+      template_path: "data/templates",
+      order_placed_template: 'order_placed',
+      order_shipped_template: 'order_shipped',
+      user_password_reset_template: 'user_password_reset',
+      gift_card_created_template: 'gift_card_created',
+      //order_canceled_template: 'order_canceled',
+      //order_refund_created_template: 'order_refund_created',
+      //order_return_requested_template: 'order_return_requested',
+      //order_items_returned_template: 'order_items_returned',
+      //swap_created_template: 'swap_created',
+      //swap_shipment_created_template: 'swap_shipment_created',
+      //swap_received_template: 'swap_received',
+      //claim_shipment_created_template: 'claim_shipment_created',
+      //medusa_restock_template: 'medusa_restock',
+    }
+  },
 ];
 
 const modules = {
@@ -244,6 +268,14 @@ const projectConfig = {
   admin_cors: ADMIN_CORS,
   // Uncomment the following lines to enable REDIS
   // redis_url: REDIS_URL
+  database_extra:
+    process.env.NODE_ENV !== "development"
+      ? {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }
+      : {},
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule} */
