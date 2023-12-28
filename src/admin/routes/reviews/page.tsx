@@ -12,22 +12,55 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ArrowLeft, ArrrowRight } from "@medusajs/icons";
-import { ProductReview } from "src/models/product-review";
+import {
+  ProductReview,
+  ReviewStatus as ReviewStatusEnum,
+} from "src/models/product-review";
 import ReviewTable from "./components/review-table";
 
+// type ReviewStatuss = ReviewStatus;
+type ReviewStatus = "pending" | "approved" | "declined";
 type Props = {};
 
-export async function deleteProduct(id: string) {
+export async function deleteProduct(id: string, callback: () => void) {
+  try {
+    const value = confirm(
+      "Review will be deleted, Are you sure you want to delete"
+    );
+
+    if (value) {
+      const response = await fetch(
+        `${process.env.MEDUSA_BACKEND_URL}/store/reviews/${id}`,
+        {
+          method: "DELETE",
+          headers: {},
+        }
+      );
+      const res = await response.json();
+      if (callback) callback();
+      return res;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function updateProductReview(
+  id: string,
+  status: ReviewStatus,
+  callback?: () => void
+) {
   try {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/store/reviews/${id}`,
+      `${process.env.MEDUSA_BACKEND_URL}/store/reviews/${id}`,
       {
-        method: "DELETE",
+        method: "PUT",
+        body: JSON.stringify({ status }),
         headers: {},
       }
     );
     const res = await response.json();
-    alert("delete success");
+    if (callback) callback();
     return res;
   } catch (error) {
     console.log(error);
@@ -39,13 +72,37 @@ const page = (props: Props) => {
 
   const getAllProducts = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:9000/store/reviews`);
+      const response = await fetch(
+        `${process.env.MEDUSA_BACKEND_URL}/store/reviews`
+      );
       const res = await response.json();
       return setReviews(res?.productReview);
     } catch (error) {
       console.log(error);
     }
   }, []);
+  const successCallback = (status: ReviewStatus, id: string) => {
+    const affectedReviewIndex = reviews.findIndex((item) => item.id === id);
+    const affectedReview = reviews.find((item) => item.id === id);
+    setReviews((prev) => {
+      return [
+        ...prev.slice(0, affectedReviewIndex),
+        { ...affectedReview, status },
+        ...prev.slice(affectedReviewIndex + 1),
+      ];
+    });
+  };
+  const handleStatus = async (id: string, status: ReviewStatus) => {
+    try {
+      const response = await updateProductReview(id, status, () =>
+        successCallback(status, id)
+      );
+
+      alert("Review Updated");
+    } catch (error) {
+      throw new Error(error);
+    }
+  };
 
   useEffect(() => {
     getAllProducts();
@@ -100,26 +157,64 @@ const page = (props: Props) => {
       ),
     }),
     columnHelper.display({
+      header: "Status",
+      id: "status",
+      cell: (info) => {
+        const reviewId = info.row.original.id;
+        const status = info.row.original.status;
+        return (
+          <div className="flex w-[200px] gap-5">
+            {status === "pending" ? (
+              <>
+                <button
+                  className="bg-green-500 text-white p-2 rounded-lg"
+                  onClick={() => {
+                    handleStatus(reviewId, "approved");
+                  }}
+                >
+                  Approve
+                </button>
+                <button
+                  className="bg-orange-500 text-white p-2 rounded-lg"
+                  onClick={() => {
+                    handleStatus(reviewId, "declined");
+                  }}
+                >
+                  Decline
+                </button>
+              </>
+            ) : (
+              status.toUpperCase()
+            )}
+          </div>
+        );
+      },
+    }),
+    columnHelper.display({
       id: "actions",
       cell: (info) => {
         return (
-          <button
-            className="bg-red-500 text-white p-2 rounded-lg"
-            onClick={() => {
-              handleDelete(info?.row?.original?.id);
-            }}
-          >
-            Delete
-          </button>
+          <div className="flex  flex-row">
+            <button
+              className="bg-red-500 text-white p-2 rounded-lg"
+              onClick={() => {
+                handleDelete(info?.row?.original?.id);
+              }}
+            >
+              Delete
+            </button>
+          </div>
         );
       },
     }),
   ];
   const PAGE_SIZE = 10;
   const handleDelete = useCallback((id: string) => {
-    deleteProduct(id);
-    setReviews((prev) => prev.filter((x) => x.id !== id));
+    deleteProduct(id, () => {
+      setReviews((prev) => prev.filter((x) => x.id !== id));
+    });
   }, []);
+
   const table = useReactTable<ProductReview>({
     data: reviews,
     columns,
