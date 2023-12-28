@@ -97,8 +97,6 @@ const page = (props: Props) => {
       const response = await updateProductReview(id, status, () =>
         successCallback(status, id)
       );
-
-      alert("Review Updated");
     } catch (error) {
       throw new Error(error);
     }
@@ -214,9 +212,12 @@ const page = (props: Props) => {
       setReviews((prev) => prev.filter((x) => x.id !== id));
     });
   }, []);
-
+  const sortReview = reviews?.sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
   const table = useReactTable<ProductReview>({
-    data: reviews,
+    data: sortReview,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -224,7 +225,7 @@ const page = (props: Props) => {
   return (
     <ReviewTable
       PAGE_SIZE={PAGE_SIZE}
-      data={reviews}
+      data={sortReview}
       columns={columns}
       table={table}
       heading={"Review List"}
