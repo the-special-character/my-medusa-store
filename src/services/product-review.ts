@@ -6,7 +6,7 @@ import {
 } from "@medusajs/medusa";
 import { EntityManager } from "typeorm";
 import { ProductReviewRepository } from "src/repositories/product-review";
-import { ProductReview } from "src/models/product-review";
+import { ProductReview, ReviewStatus } from "src/models/product-review";
 
 type InjectedDependencies = {
   manager: EntityManager;
@@ -82,7 +82,9 @@ class ProductReviewService extends TransactionBaseService {
 
   async remove(id: string) {
     return await this.atomicPhase_(async (manager) => {
-      const productReviewRepo = manager.withRepository(this.productReviewRepository_);
+      const productReviewRepo = manager.withRepository(
+        this.productReviewRepository_
+      );
 
       // Should not fail, if product does not exist, since delete is idempotent
       const product = await productReviewRepo.findOne({
@@ -97,6 +99,29 @@ class ProductReviewService extends TransactionBaseService {
       await productReviewRepo.softRemove(product);
 
       return Promise.resolve();
+    });
+  }
+  async update(id: string, status: ReviewStatus) {
+    return await this.atomicPhase_(async (manager) => {
+      const productReviewRepo = manager.withRepository(
+        this.productReviewRepository_
+      );
+
+      // Should not fail, if product does not exist, since delete is idempotent
+      const product = await productReviewRepo.findOne({
+        where: { id },
+        relations: {},
+      });
+
+      if (!product) {
+        return;
+      }
+      console.log({ id, status });
+
+      return await productReviewRepo.update(id, {
+        status,
+      });
+      // return Promise.resolve();
     });
   }
 }

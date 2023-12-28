@@ -1,4 +1,9 @@
-import { BaseEntity, Customer, Product, SoftDeletableEntity } from "@medusajs/medusa";
+import {
+  BaseEntity,
+  Customer,
+  Product,
+  SoftDeletableEntity,
+} from "@medusajs/medusa";
 import {
   BeforeInsert,
   Column,
@@ -11,7 +16,11 @@ import { Max, Min } from "class-validator";
 
 import { generateEntityId } from "@medusajs/medusa/dist/utils";
 
-export type ReviewStatus = "pending" | "approved" | "declined";
+export enum ReviewStatus {
+  PENDING = "pending",
+  APPROVED = "approved",
+  DECLINED = "declined",
+}
 
 @Entity()
 export class ProductReview extends SoftDeletableEntity {
@@ -43,8 +52,15 @@ export class ProductReview extends SoftDeletableEntity {
   content: string;
 
   @Column({
+    type: "enum",
+    enum: ReviewStatus,
+    default: ReviewStatus.PENDING,
+  })
+  status: ReviewStatus;
+
+  @Column({
     default: false,
-    nullable: false
+    nullable: false,
   })
   is_deleted: boolean;
 
