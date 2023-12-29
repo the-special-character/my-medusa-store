@@ -1,21 +1,15 @@
 "use client";
 import { RouteConfig } from "@medusajs/admin";
 import { useEffect, useState, useCallback } from "react";
-import { Star } from "@medusajs/icons";
-import { Table, Container, Heading } from "@medusajs/ui";
+import { Star, XMark } from "@medusajs/icons";
 import {
-  Row,
   createColumnHelper,
-  flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowLeft, ArrrowRight } from "@medusajs/icons";
-import {
-  ProductReview,
-  ReviewStatus as ReviewStatusEnum,
-} from "src/models/product-review";
+
+import { ProductReview } from "src/models/product-review";
 import ReviewTable from "./components/review-table";
 
 // type ReviewStatuss = ReviewStatus;
@@ -81,6 +75,7 @@ const page = (props: Props) => {
       console.log(error);
     }
   }, []);
+
   const successCallback = (status: ReviewStatus, id: string) => {
     const affectedReviewIndex = reviews.findIndex((item) => item.id === id);
     const affectedReview = reviews.find((item) => item.id === id);
@@ -92,6 +87,7 @@ const page = (props: Props) => {
       ];
     });
   };
+  const [modalOpen, setModalOpen] = useState({ open: false, params: {} });
   const handleStatus = async (id: string, status: ReviewStatus) => {
     try {
       const response = await updateProductReview(id, status, () =>
@@ -106,7 +102,6 @@ const page = (props: Props) => {
     getAllProducts();
     return () => {};
   }, []);
-
   const columnHelper = createColumnHelper<ProductReview>();
 
   const columns = [
@@ -192,7 +187,15 @@ const page = (props: Props) => {
       id: "actions",
       cell: (info) => {
         return (
-          <div className="flex  flex-row">
+          <div className="flex gap-4 flex-row">
+            <button
+              className="bg-blue-500 text-white p-2 rounded-lg"
+              onClick={() => {
+                setModalOpen({ open: true, params: info.row.original });
+              }}
+            >
+              View
+            </button>
             <button
               className="bg-red-500 text-white p-2 rounded-lg"
               onClick={() => {
@@ -222,14 +225,51 @@ const page = (props: Props) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+  const { open, params } = modalOpen;
+
   return (
-    <ReviewTable
-      PAGE_SIZE={PAGE_SIZE}
-      data={sortReview}
-      columns={columns}
-      table={table}
-      heading={"Review List"}
-    />
+    <div className="relative">
+      <ReviewTable
+        PAGE_SIZE={PAGE_SIZE}
+        data={sortReview}
+        columns={columns}
+        table={table}
+        heading={"Review List"}
+      />
+      <dialog
+        open={open}
+        className="absolute top-[40%] h-[40%] w-[40%] shadow-2xl rounded-lg bg-white"
+      >
+        <div>
+          <div className="top justify-between flex flex-1">
+            <p>Review details</p>
+            <button
+              className="bg-white shadow-sm p-2 rounded-lg"
+              onClick={() => {
+                setModalOpen({ open: false, params: {} });
+              }}
+            >
+              <XMark color="red" />
+            </button>
+          </div>
+          <p>Title:- {params?.title}</p>
+          <p>Description:- {params?.content}</p>
+          <p>Rating:- {params?.rating}</p>
+          <p>Status:- {params?.status?.toUpperCase()}</p>
+          <p>
+            User:-{" "}
+            <a
+              href={`/a/customers/${params?.customer?.id}`}
+              className="text-blue-50 font-bold"
+            >
+              {params?.customer?.first_name}
+              {params?.customer?.last_name}
+            </a>
+          </p>
+          {/* <p>User:- {params.customer.first_name}</p> */}
+        </div>
+      </dialog>
+    </div>
   );
 };
 
