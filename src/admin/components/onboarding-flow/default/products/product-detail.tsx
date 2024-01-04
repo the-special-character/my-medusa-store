@@ -23,11 +23,10 @@ const ProductDetailDefault = ({
 
   const api_key = useMemo(() => keys?.[0]?.id || "", [keys]);
   const backendUrl =
-    process.env.MEDUSA_BACKEND_URL === "/" ||
-    process.env.MEDUSA_ADMIN_BACKEND_URL === "/"
+    process.env.MEDUSA_BACKEND_URL === "/" || process.env.BACKEND_URL === "/"
       ? location.origin
       : process.env.MEDUSA_BACKEND_URL ||
-        process.env.MEDUSA_ADMIN_BACKEND_URL ||
+        process.env.BACKEND_URL ||
         "http://location:9000";
 
   useEffect(() => {

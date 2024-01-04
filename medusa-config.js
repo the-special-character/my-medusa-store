@@ -35,8 +35,7 @@ const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:9000";
 const ADMIN_URL = process.env.ADMIN_URL || "http://localhost:7001";
-// const STORE_URL = process.env.STORE_URL || "http://localhost:3000";
-const STORE_URL = "http://localhost:9001";
+const STORE_URL = process.env.STORE_URL || "http://localhost:3000";
 
 const GoogleClientId = process.env.GOOGLE_CLIENT_ID || "";
 const GoogleClientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
@@ -79,8 +78,8 @@ const plugins = [
   {
     resolve: `medusa-payment-phonepe`,
     options: {
-      redirectUrl: process.env.PHONEPE_REDIRECT_URL,
-      callbackUrl: process.env.PHONEPE_CALLBACK_URL,
+      redirectUrl: `${process.env.STORE_URL}/api/payment-confirmed`,
+      callbackUrl: `${process.env.BACKEND_URL}/phonepe/hook`,
       salt: process.env.PHONEPE_SALT,
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: process.env.PHONEPE_MODE,
@@ -221,10 +220,10 @@ const plugins = [
       from: process.env.SES_FROM,
       enable_endpoint: "42",
       template_path: "data/templates",
-      order_placed_template: 'order_placed',
-      order_shipped_template: 'order_shipped',
-      user_password_reset_template: 'user_password_reset',
-      gift_card_created_template: 'gift_card_created',
+      order_placed_template: "order_placed",
+      order_shipped_template: "order_shipped",
+      user_password_reset_template: "user_password_reset",
+      gift_card_created_template: "gift_card_created",
       //order_canceled_template: 'order_canceled',
       //order_refund_created_template: 'order_refund_created',
       //order_return_requested_template: 'order_return_requested',
@@ -234,7 +233,7 @@ const plugins = [
       //swap_received_template: 'swap_received',
       //claim_shipment_created_template: 'claim_shipment_created',
       //medusa_restock_template: 'medusa_restock',
-    }
+    },
   },
 ];
 
