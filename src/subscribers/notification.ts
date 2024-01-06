@@ -1,0 +1,60 @@
+import { NotificationService } from "@medusajs/medusa"
+
+class NotificationSubscriber {
+   protected readonly notificationService_: NotificationService
+
+   constructor({ notificationService }) {
+      this.notificationService_ = notificationService
+      this.notificationService_.subscribe("batch.created", "mailer")
+      this.notificationService_.subscribe("batch.updated", "mailer")
+      this.notificationService_.subscribe("batch.canceled", "mailer")
+      this.notificationService_.subscribe("batch.pre_processed", "mailer")
+      this.notificationService_.subscribe("batch.confirmed", "mailer")
+      this.notificationService_.subscribe("batch.processing", "mailer")
+      this.notificationService_.subscribe("batch.completed", "mailer")
+      this.notificationService_.subscribe("batch.failed", "mailer")
+      this.notificationService_.subscribe("claim.created", "mailer")
+      this.notificationService_.subscribe("claim.updated", "mailer")
+      this.notificationService_.subscribe("claim.canceled", "mailer")
+      this.notificationService_.subscribe("claim.fulfillment_created", "mailer")
+      this.notificationService_.subscribe("claim.shipment_created", "mailer")
+      this.notificationService_.subscribe("claim.refund_processed", "mailer")
+      this.notificationService_.subscribe("customer.created", "mailer")
+      this.notificationService_.subscribe("customer.updated", "mailer")
+      this.notificationService_.subscribe("customer.password_reset", "mailer")
+      this.notificationService_.subscribe("gift_card.created", "mailer")
+      this.notificationService_.subscribe("invite.created", "mailer")
+      this.notificationService_.subscribe("order.placed", "mailer")
+      this.notificationService_.subscribe("order.updated", "mailer")
+      this.notificationService_.subscribe("order.canceled", "mailer")
+      this.notificationService_.subscribe("order.completed", "mailer")
+      this.notificationService_.subscribe("order.orders_claimed", "mailer")
+      this.notificationService_.subscribe("order.gift_card_created", "mailer")
+      this.notificationService_.subscribe("order.payment_captured", "mailer")
+      this.notificationService_.subscribe("order.payment_capture_failed", "mailer")
+      this.notificationService_.subscribe("order.fulfillment_created", "mailer")
+      this.notificationService_.subscribe("order.shipment_created", "mailer")
+      this.notificationService_.subscribe("order.fulfillment_canceled", "mailer")
+      this.notificationService_.subscribe("order.return_requested", "mailer")
+      this.notificationService_.subscribe("order.items_returned", "mailer")
+      this.notificationService_.subscribe("order.return_action_required", "mailer")
+      this.notificationService_.subscribe("order.refund_created", "mailer")
+      this.notificationService_.subscribe("order.refund_failed", "mailer")
+      this.notificationService_.subscribe("order.swap_created", "mailer")
+      this.notificationService_.subscribe("swap.created", "mailer")
+      this.notificationService_.subscribe("swap.received", "mailer")
+      this.notificationService_.subscribe("swap.fulfillment_created", "mailer")
+      this.notificationService_.subscribe("swap.shipment_created", "mailer")
+      this.notificationService_.subscribe("swap.payment_completed", "mailer")
+      this.notificationService_.subscribe("swap.payment_captured", "mailer")
+      this.notificationService_.subscribe("swap.payment_capture_failed", "mailer")
+      this.notificationService_.subscribe("swap.refund_processed", "mailer")
+      this.notificationService_.subscribe("swap.process_refund_failed", "mailer")
+      this.notificationService_.subscribe("user.created", "mailer")
+      this.notificationService_.subscribe("user.updated", "mailer")
+      this.notificationService_.subscribe("user.password_reset", "mailer")
+      this.notificationService_.subscribe("user.deleted", "mailer")
+   }
+}
+ 
+export default NotificationSubscriber

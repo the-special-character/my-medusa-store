@@ -1,7 +1,7 @@
 import { toast } from "react-hot-toast"
-import Notification, {
-  NotificationTypes,
-} from "../components/atoms/notification"
+// import Notification, {
+//   NotificationTypes,
+// } from "../components/atoms/notification"
 
 const useNotification = () => {
   return (title: string, message: string, type: NotificationTypes) => {
