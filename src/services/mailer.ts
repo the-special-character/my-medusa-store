@@ -369,6 +369,8 @@ class MailerService extends NotificationService {
   }
 
   async deleteTemplate(templateId) {
+    console.log("this.templatePath_", this.templatePath_);
+    
     await exec(
       "rm " + path.join(this.templatePath_, templateId, "subject.hbs")
     );

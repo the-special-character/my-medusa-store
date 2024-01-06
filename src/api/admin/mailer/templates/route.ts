@@ -46,6 +46,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const result = schema.safeParse(req.body);
 
+  console.log(result);
+  
+
   if (!result.success) {
     throw new MedusaError(MedusaError.Types.INVALID_DATA, "error");
   }

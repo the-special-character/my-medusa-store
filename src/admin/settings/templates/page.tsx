@@ -37,20 +37,32 @@ const TemplateEditor = function({
 }) {
    "use client"
    const response = useSesTemplate(activeTemplateId)
-
    const activeTemplate = response?.data?.template
-   const initialSubject = activeTemplate?.subject || defaultTemplates[activeTemplateId]?.subject || defaultTemplates['fallback']?.subject
-   const initialValue = activeTemplate?.mjml || defaultTemplates[activeTemplateId]?.mjml || defaultTemplates['fallback']?.mjml
+   const [initialValue, setInitialValue] = useState(activeTemplate?.mjml || defaultTemplates[activeTemplateId]?.mjml || defaultTemplates['fallback']?.mjml)
+   const [initialSubject, setInitialSubject] = useState(activeTemplate?.subject || defaultTemplates[activeTemplateId]?.subject || defaultTemplates['fallback']?.subject)
+
    if (activeTemplate?.html && !activeTemplate?.mjml) {
       // warning
    }
 
-   const onChange = function(val) {
+   const onChange = async function(val) {
       console.log(val)
    }
 
-   const saveEdit = function() {
-      console.log('save')
+   const saveEdit = async function() {
+      await fetch("http://localhost:9000/admin/mailer/templates", {
+         method: "POST",
+         body: JSON.stringify({
+            templateId: activeTemplateId,
+            subject: initialSubject,
+            html: initialValue,
+            text: initialValue
+         }),
+         headers: {
+            "Content-Type": "application/json"
+         },
+         credentials: "include"
+      })
    }
 
    return (
@@ -71,14 +83,14 @@ const TemplateEditor = function({
                <div className="flex px-1 items-end">                     
                   <div className="flex-grow py-6">
                      <Label className="mt-4" weight="plus" htmlFor="subject">Subject</Label>
-                     <Input name="subject" value={initialSubject} />
+                     <Input name="subject" value={initialSubject} onChange={(e) => setInitialSubject(e.target.value)} />
                   </div>
                   <div className="py-6 pl-2 ml-auto">
                      <IconButton size="large"><Eye /></IconButton>
                      <IconButton size="large" className="ml-2"><BookOpen /></IconButton>
                   </div>
                </div>
-               <CodeMirror value={initialValue} height="auto" onChange={(val) => onChange(val)} theme={oneDark} className="text-[1rem] rounded-lg overflow-hidden" />
+               <CodeMirror value={initialValue} height="auto" onChange={(val) => setInitialValue(val)} theme={oneDark} className="text-[1rem] rounded-lg overflow-hidden" />
             </FocusModal.Body>
          </FocusModal.Content>
       </FocusModal>
@@ -103,9 +115,13 @@ const TemplateSettingsPage = function() {
          description: "Are you sure you want to completely delete this template?",
        })
        if (userHasConfirmed) {
-         const res =await fetch(`http://localhost:9000/admin/mailer/templates/${templateId}`, {
+         const res = await fetch(`http://localhost:9000/admin/mailer/templates/${templateId}`, {
+            method: "DELETE",
             credentials: "include"
          })
+
+         console.log(res);
+         
        }
    }
 
