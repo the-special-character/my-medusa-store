@@ -2,31 +2,6 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import { MedusaError } from "medusa-core-utils";
 import MailerService from "src/services/mailer";
 import { z } from "zod";
-import cors from "cors";
-
-export const config = {};
-
-const adminCorsOptions = {
-  methods: ["POST", "GET", "HEAD"],
-  credentials: true,
-};
-
-function runMiddleware(req: MedusaRequest, res: MedusaResponse, fn: Function) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-
-      return resolve(result);
-    });
-  });
-}
-
-export default async function handler(req: MedusaRequest, res: MedusaResponse) {
-  await runMiddleware(req, res, cors(adminCorsOptions));
-  res.status(200).json({ message: 'Hello from Next.js!' })
-}
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const schema = z.object({

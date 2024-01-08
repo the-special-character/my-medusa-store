@@ -246,7 +246,6 @@ class MailerService extends NotificationService {
           html,
           text,
         });
-        
 
         return this.transporter_.sendMail({
           from: from,
@@ -317,7 +316,7 @@ class MailerService extends NotificationService {
     for (let file of files) {
       const eventId = file.replace("_", ".");
       if (validEvents.includes(eventId)) {
-        templates.push({
+        templates?.push({
           templateId: file,
           eventId: eventId,
           subject: fs.existsSync(
@@ -370,7 +369,7 @@ class MailerService extends NotificationService {
 
   async deleteTemplate(templateId) {
     console.log("this.templatePath_", this.templatePath_);
-    
+
     await exec(
       "rm " + path.join(this.templatePath_, templateId, "subject.hbs")
     );
