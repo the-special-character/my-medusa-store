@@ -31,7 +31,7 @@ const STORE_CORS = process.env.STORE_CORS || "http://localhost:8000";
 const DATABASE_URL =
   process.env.DATABASE_URL || "postgres://localhost/medusa-starter-default";
 
-const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
+const REDIS_URL = process.env.REDIS_URL || "redis://62.72.13.4:6379";
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:9000";
 const ADMIN_URL = process.env.ADMIN_URL || "http://localhost:7001";
@@ -45,15 +45,6 @@ const FacebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET || "";
 const plugins = [
   `medusa-fulfillment-manual`,
   `medusa-payment-manual`,
-  {
-    resolve: `medusa-plugin-wishlist`,
-  },
-  {
-    resolve: `@medusajs/file-local`,
-    options: {
-      upload_dir: "uploads",
-    },
-  },
   {
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
@@ -84,20 +75,6 @@ const plugins = [
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: process.env.PHONEPE_MODE,
       redirectMode: process.env.PHONEPE_REDIRECT_MODE,
-    },
-  },
-  {
-    resolve: `medusa-plugin-payu`,
-    options: {
-      url: "https://test.payu.in",
-      posId: "2Ysfa1dz",
-      currency: "INR",
-      clientId:
-        "84f104fbfe4352fa161a39f622fecd585227f8b76f5e350a66dfe2fb0831b0f7",
-      clientSecret:
-        "05b042fb93959f898bf41e7c2db6385947de6fe7553ec6b30c834f654e99cc85",
-      serverIp: "127.0.0.1",
-      serverUrl: STORE_URL,
     },
   },
   {
@@ -132,124 +109,99 @@ const plugins = [
       },
     },
   },
-  {
-    resolve: "medusa-plugin-auth",
-    /** @type {import('medusa-plugin-auth').AuthOptions} */
-    options: {
-      strict: "all", // or "none" or "store" or "admin"
-      google: {
-        clientID: GoogleClientId,
-        clientSecret: GoogleClientSecret,
-
-        admin: {
-          callbackUrl: `${BACKEND_URL}/admin/auth/google/cb`,
-          failureRedirect: `${ADMIN_URL}/login`,
-
-          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-          // This query param will have the priority over this configuration
-          successRedirect: `${ADMIN_URL}/`,
-
-          // authPath: '/admin/auth/google',
-          // authCallbackPath: '/admin/auth/google/cb',
-          // expiresIn: 24 * 60 * 60 * 1000,
-          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-          //    // implement your custom verify callback here if you need it
-          // }
-        },
-
-        store: {
-          callbackUrl: `${BACKEND_URL}/store/auth/google/cb`,
-          failureRedirect: `${STORE_URL}/login`,
-
-          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-          // This query param will have the priority over this configuration
-          successRedirect: `${STORE_URL}/`,
-
-          // authPath: '/store/auth/google',
-          // authCallbackPath: '/store/auth/google/cb',
-          // expiresIn: 24 * 60 * 60 * 1000,
-          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-          //    // implement your custom verify callback here if you need it
-          // }
-        },
-      },
-      facebook: {
-        clientID: FacebookClientId,
-        clientSecret: FacebookClientSecret,
-
-        admin: {
-          callbackUrl: `${BACKEND_URL}/admin/auth/facebook/cb`,
-          failureRedirect: `${ADMIN_URL}/login`,
-
-          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-          // This query param will have the priority over this configuration
-          successRedirect: `${ADMIN_URL}/`,
-
-          // authPath: '/admin/auth/facebook',
-          // authCallbackPath: '/admin/auth/facebook/cb',
-          // expiresIn: 24 * 60 * 60 * 1000,
-          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-          //    // implement your custom verify callback here if you need it
-          // }
-        },
-
-        store: {
-          callbackUrl: `${BACKEND_URL}/store/auth/facebook/cb`,
-          failureRedirect: `${STORE_URL}/login`,
-
-          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-          // This query param will have the priority over this configuration
-          successRedirect: `${STORE_URL}/`,
-
-          // authPath: '/store/auth/facebook',
-          // authCallbackPath: '/store/auth/facebook/cb',
-          // expiresIn: 24 * 60 * 60 * 1000,
-          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-          //    // implement your custom verify callback here if you need it
-          // }
-        },
-      },
-    },
-  },
   // {
-  //   resolve: `medusa-plugin-mailer`,
+  //   resolve: "medusa-plugin-auth",
+  //   /** @type {import('medusa-plugin-auth').AuthOptions} */
   //   options: {
-  //     auth_user: process.env.AUTH_USER,
-  //     auth_pass: process.env.AUTH_PASS,
-  //     from: process.env.AUTH_USER,
-  //     enable_endpoint: "42",
-  //     template_path: "data/templates",
-  //     enableUI: true,
-  //     order_placed_template: "order_placed",
-  //     order_shipped_template: "order_shipped",
-  //     user_password_reset_template: "user_password_reset",
-  //     gift_card_created_template: "gift_card_created",
-  //     //order_canceled_template: 'order_canceled',
-  //     //order_refund_created_template: 'order_refund_created',
-  //     //order_return_requested_template: 'order_return_requested',
-  //     //order_items_returned_template: 'order_items_returned',
-  //     //swap_created_template: 'swap_created',
-  //     //swap_shipment_created_template: 'swap_shipment_created',
-  //     //swap_received_template: 'swap_received',
-  //     //claim_shipment_created_template: 'claim_shipment_created',
-  //     //medusa_restock_template: 'medusa_restock',
+  //     strict: "all", // or "none" or "store" or "admin"
+  //     google: {
+  //       clientID: GoogleClientId,
+  //       clientSecret: GoogleClientSecret,
+
+  //       admin: {
+  //         callbackUrl: `${BACKEND_URL}/admin/auth/google/cb`,
+  //         failureRedirect: `${ADMIN_URL}/login`,
+
+  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+  //         // This query param will have the priority over this configuration
+  //         successRedirect: `${ADMIN_URL}/`,
+
+  //         // authPath: '/admin/auth/google',
+  //         // authCallbackPath: '/admin/auth/google/cb',
+  //         // expiresIn: 24 * 60 * 60 * 1000,
+  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+  //         //    // implement your custom verify callback here if you need it
+  //         // }
+  //       },
+
+  //       store: {
+  //         callbackUrl: `${BACKEND_URL}/store/auth/google/cb`,
+  //         failureRedirect: `${STORE_URL}/login`,
+
+  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+  //         // This query param will have the priority over this configuration
+  //         successRedirect: `${STORE_URL}/`,
+
+  //         // authPath: '/store/auth/google',
+  //         // authCallbackPath: '/store/auth/google/cb',
+  //         // expiresIn: 24 * 60 * 60 * 1000,
+  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+  //         //    // implement your custom verify callback here if you need it
+  //         // }
+  //       },
+  //     },
+  //     facebook: {
+  //       clientID: FacebookClientId,
+  //       clientSecret: FacebookClientSecret,
+
+  //       admin: {
+  //         callbackUrl: `${BACKEND_URL}/admin/auth/facebook/cb`,
+  //         failureRedirect: `${ADMIN_URL}/login`,
+
+  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+  //         // This query param will have the priority over this configuration
+  //         successRedirect: `${ADMIN_URL}/`,
+
+  //         // authPath: '/admin/auth/facebook',
+  //         // authCallbackPath: '/admin/auth/facebook/cb',
+  //         // expiresIn: 24 * 60 * 60 * 1000,
+  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+  //         //    // implement your custom verify callback here if you need it
+  //         // }
+  //       },
+
+  //       store: {
+  //         callbackUrl: `${BACKEND_URL}/store/auth/facebook/cb`,
+  //         failureRedirect: `${STORE_URL}/login`,
+
+  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+  //         // This query param will have the priority over this configuration
+  //         successRedirect: `${STORE_URL}/`,
+
+  //         // authPath: '/store/auth/facebook',
+  //         // authCallbackPath: '/store/auth/facebook/cb',
+  //         // expiresIn: 24 * 60 * 60 * 1000,
+  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+  //         //    // implement your custom verify callback here if you need it
+  //         // }
+  //       },
+  //     },
   //   },
   // },
 ];
 
 const modules = {
-  /*eventBus: {
-    resolve: "@medusajs/event-bus-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL
-    }
-  },*/
+  // eventBus: {
+  //   resolve: "@medusajs/event-bus-local",
+  // },
+  // cacheService: {
+  //   resolve: "@medusajs/cache-redis",
+  //   options: { 
+  //     redisUrl: REDIS_URL,
+  //     ttl: 30,
+  //   },
+  // },
+
   inventoryService: {
     resolve: "@medusajs/inventory",
   },
@@ -266,7 +218,7 @@ const projectConfig = {
   database_url: DATABASE_URL,
   admin_cors: ADMIN_CORS,
   // Uncomment the following lines to enable REDIS
-  // redis_url: REDIS_URL
+  redis_url: REDIS_URL,
   database_extra:
     process.env.NODE_ENV !== "development"
       ? {
