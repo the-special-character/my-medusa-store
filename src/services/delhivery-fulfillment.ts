@@ -198,9 +198,7 @@ class DelhiveryFulfillmentService extends FulfillmentService {
   }
 
   async cancelFulfillment(fulfillment: { [x: string]: unknown }): Promise<any> {
-    return {
-      
-    };
+    return {};
   }
 
   async createReturn(

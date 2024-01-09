@@ -11,7 +11,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return await wishlistService
       .withTransaction(transactionManager)
       .retrieveByCustomerId(req.params.customerId, {
-        relations: ["items", "items.product"],
+        relations: ["items", "items.product", "items.product.variants"],
       });
   });
 
