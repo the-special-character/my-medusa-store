@@ -18,51 +18,7 @@ import { CreateReturnType } from "@medusajs/medusa/dist/types/fulfillment-provid
 import axios, { AxiosInstance } from "axios";
 import { MedusaContainer } from "medusa-core-utils";
 import { FulfillmentService } from "medusa-interfaces";
-const dummyShipment = {
-  shipments: [
-    {
-      name: "test lastname",
-      add: "address",
-      pin: "380022",
-      city: "Ahmedabad",
-      state: "Gujarat",
-      country: "India",
-      phone: "90930393",
-      order: "order_01HKS25R4VDG85NEX53ASKZY1G",
-      payment_mode: "COD",
-      return_pin: "",
-      return_city: "",
-      return_phone: "",
-      return_add: "",
-      return_state: "",
-      return_country: "",
-      products_desc: "",
-      hsn_code: "",
-      cod_amount: "19000",
-      order_date: null,
-      total_amount: "",
-      seller_add: "",
-      seller_name: "",
-      seller_inv: "",
-      quantity: "",
-      waybill: "",
-      shipment_width: "1000",
-      shipment_height: "1000",
-      weight: "",
-      seller_gst_tin: "",
-      shipping_mode: "Express",
-      address_type: "",
-    },
-  ],
-  pickup_location: {
-    name: "test",
-    add: "8 ganeshkunj",
-    city: "ahmedabad",
-    pin_code: 382470,
-    country: "India",
-    phone: "8690090417",
-  },
-};
+
 class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
   static LIFE_TIME = Lifetime.SCOPED;
@@ -213,6 +169,8 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           order,
         }),
       });
+      order.payments[0].provider_id;
+
       const shipmentData = {
         shipments: items.map((x) => ({
           name: `${order?.shipping_address?.first_name} ${order?.shipping_address?.last_name}`,
@@ -225,7 +183,8 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           country: order?.shipping_address?.country || "India",
           phone: order?.shipping_address?.phone,
           order: order?.id,
-          payment_mode: "Prepaid",
+          payment_mode:
+            order.payments[0].provider_id === "cod" ? "COD" : "Prepaid",
           return_pin: locationDetails.address.postal_code,
           return_city: locationDetails.address.city,
           return_phone: locationDetails.address.phone,
