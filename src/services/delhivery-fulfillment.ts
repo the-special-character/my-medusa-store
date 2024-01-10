@@ -77,11 +77,6 @@ class DelhiveryFulfillmentService extends FulfillmentService {
     data: { [x: string]: unknown },
     cart: Cart
   ): Promise<Record<string, unknown>> {
-    console.log("validateFulfillmentData");
-    console.log("optionData", optionData);
-    console.log("data", data);
-    console.log("cart", JSON.stringify(cart));
-
     if (
       ["delhivery-surface", "delhivery-express"].indexOf(optionData.id) === -1
     ) {

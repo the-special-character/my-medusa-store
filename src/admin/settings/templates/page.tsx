@@ -216,7 +216,6 @@ const TemplateSettingsPage = () => {
         }
       );
 
-      console.log(res);
     }
   }
 

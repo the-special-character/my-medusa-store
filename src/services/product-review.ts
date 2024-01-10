@@ -116,7 +116,6 @@ class ProductReviewService extends TransactionBaseService {
       if (!product) {
         return;
       }
-      console.log({ id, status });
 
       return await productReviewRepo.update(id, {
         status,

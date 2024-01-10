@@ -1,7 +1,6 @@
 import type { WidgetConfig } from "@medusajs/admin";
 
 const InvoiceWidget = (props) => {
-  console.log(props);
 
   return (
     <div>

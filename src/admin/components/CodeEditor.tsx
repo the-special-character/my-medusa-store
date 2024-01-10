@@ -5,7 +5,6 @@ const CodeEditor = ({ initialValue: string }) => {
    const [value, setValue] = useState("console.log('hello world!')")
 
    const onChange = useCallback((val, viewUpdate) => {
-     console.log('val:', val)
      setValue(val)
    }, [])
 

@@ -12,7 +12,6 @@ const ActionMenu = (templateId) => {
        })
        if (userHasConfirmed) {
          const response = await useSesTemplateDelete(templateId)
-console.log(response)
        }
    }
    return (

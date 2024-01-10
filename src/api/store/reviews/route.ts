@@ -11,7 +11,6 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
   const productReview = await manager.transaction(
     async (transactionManager) => {
-      console.log("req.body", req.body);
 
       return await productReviewService
         .withTransaction(transactionManager)

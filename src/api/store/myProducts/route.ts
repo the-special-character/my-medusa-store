@@ -46,9 +46,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     const to = req.query.lte;
     const from = req.query.gte || 0;
     const order = req.query.order;
-    console.log("====================================");
-    console.log(category_id);
-    console.log("====================================");
 
     const products = await ProductRepository.find({
       relations: [
@@ -69,7 +66,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
         
       },
     });
-    console.log(products.length);
 
     const response = await productService
       .withTransaction(transactionManager)
