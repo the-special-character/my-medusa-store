@@ -1,90 +1,107 @@
-import { 
-    AbstractPaymentProcessor, 
-    PaymentProcessorContext, 
-    PaymentProcessorError, 
-    PaymentProcessorSessionResponse, 
-    PaymentSessionStatus,
-  } from "@medusajs/medusa"
-  
-  class CODPaymentProcessor extends AbstractPaymentProcessor {
-    static identifier = "cod"
-  
-    async capturePayment(
-      paymentSessionData: Record<string, unknown>
-    ): Promise<Record<string, unknown> | PaymentProcessorError> {
-        // return { status: "captured" }
-      throw new Error("Method not implemented.")
-    }
-    async authorizePayment(
-      paymentSessionData: Record<string, unknown>, 
-      context: Record<string, unknown>
-    ): Promise<
-      PaymentProcessorError | 
-      { 
-        status: PaymentSessionStatus; 
-        data: Record<string, unknown>; 
-      }
-    > {
-        return { status: PaymentSessionStatus.AUTHORIZED, data: { status: "authorized" } }
-    //   throw new Error("Method not implemented.")
-    }
-    async cancelPayment(
-      paymentSessionData: Record<string, unknown>
-    ): Promise<Record<string, unknown> | PaymentProcessorError> {
-        return { status: PaymentSessionStatus.CANCELED }
-    }
-    async initiatePayment(
-      context: PaymentProcessorContext
-    ): Promise<
-      PaymentProcessorError | PaymentProcessorSessionResponse
-    > {
-      throw new Error("Method not implemented.")
-    }
+import { PaymentService } from "medusa-interfaces";
 
-    async deletePayment(
-      paymentSessionData: Record<string, unknown>
-    ): Promise<Record<string, unknown> | PaymentProcessorError> {
-      throw new Error("Method not implemented.")
-    }
+class ManualPaymentService extends PaymentService {
+  static identifier = "cod";
 
-    async getPaymentStatus(
-      paymentSessionData: Record<string, unknown>
-    ): Promise<PaymentSessionStatus> {
-      throw new Error("Method not implemented.")
-    }
-
-    async refundPayment(
-      paymentSessionData: Record<string, unknown>, 
-      refundAmount: number
-    ): Promise<Record<string, unknown> | PaymentProcessorError> {
-      throw new Error("Method not implemented.")
-    }
-
-    async retrievePayment(
-      paymentSessionData: Record<string, unknown>
-    ): Promise<Record<string, unknown> | PaymentProcessorError> {
-      throw new Error("Method not implemented.")
-    }
-
-    async updatePayment(
-      context: PaymentProcessorContext
-    ): Promise<
-      void | 
-      PaymentProcessorError | 
-      PaymentProcessorSessionResponse
-    > {
-      throw new Error("Method not implemented.")
-    }
-
-    async updatePaymentData(
-      sessionId: string,
-      data: Record<string, unknown>
-    ): Promise<
-      Record<string, unknown> | 
-      PaymentProcessorError
-    > {
-      throw new Error("Method not implemented.")
-    }
+  constructor() {
+    super();
   }
-  
-  export default CODPaymentProcessor
+
+  /**
+   * Returns the currently held status.
+   * @param {object} paymentData - payment method data from cart
+   * @returns {string} the status of the payment
+   */
+  // @ts-ignore
+  async getStatus(paymentData) {
+    const { status } = paymentData;
+    return status;
+  }
+
+  /**
+   * Creates a manual payment with status "pending"
+   * @param {object} cart - cart to create a payment for
+   * @returns {object} an object with staus
+   */
+  // @ts-ignore
+  async createPayment(cart: object) {
+    return { status: "pending" };
+  }
+
+  /**
+   * Retrieves payment
+   * @param {object} data - the data of the payment to retrieve
+   * @returns {Promise<object>} returns data
+   */
+  async retrievePayment(data) {
+    return data;
+  }
+
+  /**
+   * Updates the payment status to authorized
+   * @returns {Promise<{ status: string, data: object }>} result with data and status
+   */
+  async authorizePayment() {
+    return { status: "authorized", data: { status: "authorized" } };
+  }
+
+  /**
+   * Noop, simply returns existing data.
+   * @param {object} sessionData - payment session data.
+   * @returns {object} same data
+   */
+  async updatePayment(sessionData) {
+    return sessionData;
+  }
+
+  /**
+   * @param {object} sessionData - payment session data.
+   * @param {object} update - payment session update data.
+   * @returns {object} existing data merged with update data
+   */
+  async updatePaymentData(sessionData, update) {
+    return { ...sessionData, ...update.data };
+  }
+
+  async deletePayment() {
+    return;
+  }
+
+  /**
+   * Updates the payment status to captured
+   * @param {object} paymentData - payment method data from cart
+   * @returns {object} object with updated status
+   */
+  async capturePayment() {
+    return { status: "captured" };
+  }
+
+  /**
+   * Returns the data currently held in a status
+   * @param {object} session - payment method data from cart
+   * @returns {object} the current data
+   */
+  async getPaymentData(session) {
+    return session.data;
+  }
+
+  /**
+   * Noop, resolves to allow manual refunds.
+   * @param {object} payment - payment method data from cart
+   * @returns {string} same data
+   */
+  // @ts-ignore
+  async refundPayment(payment) {
+    return payment.data;
+  }
+
+  /**
+   * Updates the payment status to cancled
+   * @returns {object} object with canceled status
+   */
+  async cancelPayment() {
+    return { status: "canceled" };
+  }
+}
+
+export default ManualPaymentService;
