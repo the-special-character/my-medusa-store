@@ -19,7 +19,7 @@ import axios, { AxiosInstance } from "axios";
 import { MedusaContainer } from "medusa-core-utils";
 import { FulfillmentService } from "medusa-interfaces";
 
-class DelhiveryFulfillmentService extends FulfillmentService {
+class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
   static LIFE_TIME = Lifetime.SCOPED;
   private axiosInstance_: AxiosInstance;
@@ -27,17 +27,24 @@ class DelhiveryFulfillmentService extends FulfillmentService {
   productVariantInventoryService_: ProductVariantInventoryService;
   stockLocationService_: StockLocationService;
 
-  constructor(
-    { orderService, productVariantInventoryService, stockLocationService },
-    config?: Record<string, unknown>
-  ) {
-    super();
+  constructor(container, config?: Record<string, unknown>) {
+    super(container);
+
+    const {
+      orderService,
+      productVariantInventoryService,
+      stockLocationService,
+    } = container;
 
     try {
       this.productVariantInventoryService_ = productVariantInventoryService;
       this.stockLocationService_ = stockLocationService;
     } catch (error) {
-      console.log("productVariantInventoryService_", error);
+      console.log(
+        "DELHIVERY:::::::::::::::",
+        "productVariantInventoryService_",
+        error
+      );
     }
 
     // /** @private @const {OrderService} */
@@ -71,16 +78,16 @@ class DelhiveryFulfillmentService extends FulfillmentService {
       },
     ];
   }
-
+  // COMPLETED
   async validateFulfillmentData(
     optionData: { [x: string]: string },
     data: { [x: string]: unknown },
     cart: Cart
   ): Promise<Record<string, unknown>> {
-    console.log("validateFulfillmentData");
-    console.log("optionData", optionData);
-    console.log("data", data);
-    console.log("cart", JSON.stringify(cart));
+    console.log("DELHIVERY:::::::::::::::", "validateFulfillmentData");
+    console.log("DELHIVERY:::::::::::::::", "optionData", optionData);
+    console.log("DELHIVERY:::::::::::::::", "data", data);
+    console.log("DELHIVERY:::::::::::::::", "cart", JSON.stringify(cart));
 
     if (
       ["delhivery-surface", "delhivery-express"].indexOf(optionData.id) === -1
@@ -91,30 +98,36 @@ class DelhiveryFulfillmentService extends FulfillmentService {
     const res = await this.axiosInstance_.get(
       `c/api/pin-codes/json/?filter_codes=${cart.shipping_address.postal_code}`
     );
-
     if (res.data?.delivery_codes?.length === 0) {
       throw new Error("delhivery not possible on this pincode data");
     }
-
+    console.log({ response: JSON.stringify(res.data) });
     return {
       ...optionData,
       ...data,
     };
   }
-
+  // COMPLETED
   async validateOption(data: { [x: string]: unknown }): Promise<boolean> {
+    console.log("DELHIVERY:::::::::::::::validateOption", data);
     return true;
   }
-
+  // COMPLETED
   async canCalculate(data: { [x: string]: unknown }): Promise<boolean> {
+    console.log("DELHIVERY:::::::::::::::canCalculate", data);
     return data.id == "delhivery-surface" || data.id == "delhivery-express";
   }
-
+  // COMPLETED
   async calculatePrice(
     optionData: { [x: string]: unknown },
     data: { [x: string]: unknown },
     cart: Cart
   ): Promise<number> {
+    console.log("DELHIVERY:::::::::::::::calculatePrice", {
+      data,
+      optionData,
+      cart,
+    });
     const inventory = await this.stockLocationService_.list(
       {},
       {
@@ -134,13 +147,19 @@ class DelhiveryFulfillmentService extends FulfillmentService {
 
     return res?.data[0]?.total_amount || 0;
   }
-
+  // TODO >
   async createFulfillment(
     data: Record<string, unknown>,
     items: LineItem[],
     order: Order,
     fulfillment: Fulfillment
   ): Promise<Record<string, unknown>> {
+    console.log("DELHIVERY:::::::::::::::createFulfillment", {
+      data,
+      items,
+      order,
+      fulfillment,
+    });
     const locationDetails = await this.stockLocationService_.retrieve(
       fulfillment.location_id,
       {
@@ -194,31 +213,48 @@ class DelhiveryFulfillmentService extends FulfillmentService {
         },
       }}`
     );
+    if (!res.data.success) {
+      const messages = res.data.packages
+        .reduce((p, c) => {
+          return [...p, ...c.remarks];
+        }, [])
+        .join(",");
+
+      throw new Error(messages);
+    }
+
     return res.data;
   }
 
   async cancelFulfillment(fulfillment: { [x: string]: unknown }): Promise<any> {
+    console.log("DELHIVERY:::::::::::::::cancelFulfillment", { fulfillment });
     return {};
   }
 
   async createReturn(
     returnOrder: CreateReturnType
   ): Promise<Record<string, unknown>> {
+    console.log("DELHIVERY:::::::::::::::createReturn", { returnOrder });
     return {};
   }
 
-  getFulfillmentDocuments(data): never[] {
+  getFulfillmentDocuments(data: Record<string, unknown>): Promise<any> {
+    console.log("DELHIVERY:::::::::::::::getFulfillmentDocuments", { data });
     throw new Error("Method not implemented.");
     // return Promise.resolve({});
     // return []
   }
 
-  getReturnDocuments(data: any): never[] {
+  async getReturnDocuments(data: Record<string, unknown>): Promise<any> {
+    console.log("DELHIVERY:::::::::::::::getReturnDocuments", { data });
+
     throw new Error("Method not implemented.");
     // return Promise.resolve({});
   }
 
-  getShipmentDocuments(data: any): never[] {
+  async getShipmentDocuments(data: Record<string, unknown>): Promise<any> {
+    console.log("DELHIVERY:::::::::::::::getShipmentDocuments", { data });
+
     throw new Error("Method not implemented.");
     // return Promise.resolve({});
   }
@@ -227,6 +263,10 @@ class DelhiveryFulfillmentService extends FulfillmentService {
     fulfillmentData: Record<string, unknown>,
     documentType: "invoice" | "label"
   ): Promise<any> {
+    console.log("DELHIVERY:::::::::::::::retrieveDocuments", {
+      fulfillmentData,
+      documentType,
+    });
     return Promise.resolve({});
     // throw new Error("Method not implemented.");
   }
