@@ -84,11 +84,6 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
     data: { [x: string]: unknown },
     cart: Cart
   ): Promise<Record<string, unknown>> {
-    console.log("DELHIVERY:::::::::::::::", "validateFulfillmentData");
-    console.log("DELHIVERY:::::::::::::::", "optionData", optionData);
-    console.log("DELHIVERY:::::::::::::::", "data", data);
-    console.log("DELHIVERY:::::::::::::::", "cart", JSON.stringify(cart));
-
     if (
       ["delhivery-surface", "delhivery-express"].indexOf(optionData.id) === -1
     ) {
