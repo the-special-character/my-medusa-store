@@ -1,14 +1,10 @@
 import {
   AbstractFulfillmentService,
   Cart,
-  ClaimService,
   Fulfillment,
   LineItem,
   Order,
-  OrderService,
   ProductVariantInventoryService,
-  SwapService,
-  TotalsService,
 } from "@medusajs/medusa";
 import { StockLocationService } from "@medusajs/stock-location/dist/services";
 import { Lifetime } from "awilix";
@@ -16,8 +12,6 @@ import { Lifetime } from "awilix";
 // import { StockLocationService } from '@medusajs/stock-location/dist/services';
 import { CreateReturnType } from "@medusajs/medusa/dist/types/fulfillment-provider";
 import axios, { AxiosInstance } from "axios";
-import { MedusaContainer } from "medusa-core-utils";
-import { FulfillmentService } from "medusa-interfaces";
 
 class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
@@ -302,7 +296,10 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           country: locationDetails.address.country_code || "India",
           phone: "8888888888",
           order: returnOrder?.id,
-          payment_mode: "Prepaid",
+          payment_mode:
+            returnOrder.order.payments[0].provider_id === "cod"
+              ? "COD"
+              : "Prepaid",
           return_pin: locationDetails.address.postal_code,
           return_city: locationDetails.address.city,
           return_phone: locationDetails.address.phone,
