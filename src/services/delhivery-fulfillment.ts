@@ -287,13 +287,11 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       const shipmentData = {
         shipments: returnOrder.items.map((x) => ({
           name: `${returnOrder?.order?.shipping_address?.first_name} ${returnOrder?.order?.shipping_address?.last_name}`,
-          add:
-            `${returnOrder?.order?.shipping_address?.address_1} ${returnOrder?.order?.shipping_address?.address_2}` ||
-            "8 ganeshkunj",
+          add: `${returnOrder?.order?.shipping_address?.address_1} ${returnOrder?.order?.shipping_address?.address_2}`,
           pin: returnOrder?.order?.shipping_address?.postal_code,
-          city: returnOrder?.order?.shipping_address?.city || "ahmedabad",
+          city: returnOrder?.order?.shipping_address?.city,
           state: returnOrder?.order?.shipping_address?.province,
-          country: returnOrder?.order?.shipping_address?.country || "India",
+          country: returnOrder?.order?.shipping_address?.country,
           phone: returnOrder?.order?.shipping_address?.phone,
           order: returnOrder?.order?.id,
           payment_mode:
@@ -329,7 +327,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           city: locationDetails?.address?.city,
           pin_code: locationDetails?.address?.postal_code,
           country: locationDetails?.address?.country_code,
-          phone: locationDetails?.address?.phone || 9999999999,
+          phone: locationDetails?.address?.phone,
         },
       };
 
