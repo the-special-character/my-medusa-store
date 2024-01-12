@@ -1,14 +1,11 @@
 import {
   AbstractFulfillmentService,
   Cart,
-  ClaimService,
   Fulfillment,
   LineItem,
   Order,
   OrderService,
   ProductVariantInventoryService,
-  SwapService,
-  TotalsService,
 } from "@medusajs/medusa";
 import { StockLocationService } from "@medusajs/stock-location/dist/services";
 import { Lifetime } from "awilix";
@@ -16,8 +13,6 @@ import { Lifetime } from "awilix";
 // import { StockLocationService } from '@medusajs/stock-location/dist/services';
 import { CreateReturnType } from "@medusajs/medusa/dist/types/fulfillment-provider";
 import axios, { AxiosInstance } from "axios";
-import { MedusaContainer } from "medusa-core-utils";
-import { FulfillmentService } from "medusa-interfaces";
 
 class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
@@ -25,6 +20,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   private axiosInstance_: AxiosInstance;
   private options_: any;
   productVariantInventoryService_: ProductVariantInventoryService;
+  orderService_: OrderService;
   stockLocationService_: StockLocationService;
 
   constructor(container, config?: Record<string, unknown>) {
@@ -48,7 +44,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
     }
 
     // /** @private @const {OrderService} */
-    // this.orderService_ = container.resolve<OrderService>("orderService");
+    this.orderService_ = orderService;
 
     // /** @private @const {TotalsService} */
     // this.totalsService_ = container.resolve<TotalsService>("totalsService");
@@ -125,24 +121,25 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       optionData,
       cart,
     });
-    const inventory = await this.stockLocationService_.list(
-      {},
-      {
-        relations: ["address"],
-      }
-    );
+    // const inventory = await this.stockLocationService_.list(
+    //   {},
+    //   {
+    //     relations: ["address"],
+    //   }
+    // );
 
-    const weight = cart.items.reduce((p, c) => {
-      return p + c.variant.weight * c.quantity;
-    }, 0);
+    // const weight = cart.items.reduce((p, c) => {
+    //   return p + c.variant.weight * c.quantity;
+    // }, 0);
 
-    const md = data.id === "delhivery-express" ? "E" : "S";
+    // const md = data.id === "delhivery-express" ? "E" : "S";
 
-    const res = await this.axiosInstance_.get(
-      `api/kinko/v1/invoice/charges/.json?md=${md}&ss=DTO&d_pin=${cart.shipping_address.postal_code}&o_pin=${inventory[0].address.postal_code}&cgm=${weight}&pt=Pre-paid&cod=0`
-    );
+    // const res = await this.axiosInstance_.get(
+    //   `api/kinko/v1/invoice/charges/.json?md=${md}&ss=DTO&d_pin=${cart.shipping_address.postal_code}&o_pin=${inventory[0].address.postal_code}&cgm=${weight}&pt=Pre-paid&cod=0`
+    // );
 
-    return res?.data[0]?.total_amount || 0;
+    return 0;
+    // res?.data[0]?.total_amount || 0;
   }
 
   // COMPLETED
@@ -268,12 +265,22 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
     });
     return {};
   }
+  // COMPLETED
 
-  // TODO >
   async createReturn(
     returnOrder: CreateReturnType
   ): Promise<Record<string, unknown>> {
     try {
+      const order = await this.orderService_.retrieve(returnOrder.order_id, {
+        relations: [
+          "shipping_address",
+          "billing_address",
+          "region",
+          "payments",
+          "cart.items",
+        ],
+      });
+
       const locationDetails = await this.stockLocationService_.retrieve(
         returnOrder.location_id,
         {
@@ -287,49 +294,51 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       });
       const shipmentData = {
         shipments: returnOrder.items.map((x) => ({
-          name: `${returnOrder.shipping_method.shipping_option.name}`,
-          add:
-            `${locationDetails.address.address_1} ${locationDetails.address.address_2}` ||
-            "8 ganeshkunj",
-          pin: locationDetails.address.postal_code,
-          city: locationDetails.address.city || "ahmedabad",
-          state: locationDetails.address.province,
-          country: locationDetails.address.country_code || "India",
-          phone: "8888888888",
-          order: returnOrder?.id,
-          payment_mode: "Prepaid",
-          return_pin: locationDetails.address.postal_code,
-          return_city: locationDetails.address.city,
-          return_phone: locationDetails.address.phone,
-          return_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
-          return_state: locationDetails.address.province,
-          return_country: locationDetails.address.country_code,
-          products_desc: x.item.description,
-          hsn_code: x.item.variant.hs_code,
-          cod_amount: "",
-          order_date: returnOrder.created_at,
+          name: `${order.shipping_address?.first_name} ${order.shipping_address?.last_name}`,
+          add: `${order.shipping_address?.address_1} ${order.shipping_address?.address_2}`,
+          pin: order.shipping_address?.postal_code,
+          city: order.shipping_address?.city,
+          state: order.shipping_address?.province,
+          country: order.shipping_address?.country,
+          phone: order.shipping_address?.phone || "9999999999",
+          order: order.id,
+          payment_mode:
+            order.payments[0]?.provider_id === "cod" ? "COD" : "Prepaid",
+          return_pin: locationDetails?.address?.postal_code,
+          return_city: locationDetails?.address?.city,
+          return_phone: locationDetails?.address?.phone,
+          return_add: `${locationDetails?.address?.address_1} ${locationDetails?.address?.address_2}`,
+          return_state: locationDetails?.address?.province,
+          return_country: locationDetails?.address?.country_code,
+          products_desc: x?.item?.description,
+          hsn_code: x?.item?.variant?.hs_code,
+          ...(order.payments[0]?.provider_id === "cod" && {
+            cod_amount: returnOrder.refund_amount || "10",
+          }),
+          order_date: order.created_at,
           total_amount: returnOrder.refund_amount,
-          seller_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
-          seller_name: locationDetails.address.company,
+          seller_add: `${locationDetails?.address?.address_1} ${locationDetails?.address?.address_2}`,
+          seller_name: locationDetails?.address?.company,
           seller_inv: "",
-          quantity: x.quantity,
+          quantity: x?.quantity,
           waybill: "",
-          shipment_width: x.item.variant.width,
-          shipment_height: x.item.variant.height,
-          weight: x.item.variant.weight,
+          shipment_width: x?.item?.variant?.width,
+          shipment_height: x?.item?.variant?.height,
+          weight: x?.item?.variant?.weight,
           seller_gst_tin: "",
-          shipping_mode: "Express",
+          shipping_mode: "Surface",
           address_type: "home",
         })),
         pickup_location: {
-          name: locationDetails.name,
-          add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
-          city: locationDetails.address.city,
-          pin_code: locationDetails.address.postal_code,
-          country: locationDetails.address.country_code,
-          phone: locationDetails.address.phone || 0,
+          name: locationDetails?.name,
+          add: `${locationDetails?.address?.address_1} ${locationDetails?.address?.address_2}`,
+          city: locationDetails?.address?.city,
+          pin_code: locationDetails?.address?.postal_code,
+          country: locationDetails?.address?.country_code,
+          phone: locationDetails?.address?.phone || "9999999999",
         },
       };
+      console.log({ shipmentData: JSON.stringify(shipmentData) });
 
       const res = await fetch(
         `https://${process.env.DELHIVERY_MODE}.delhivery.com/api/cmu/create.json`,
@@ -351,7 +360,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
 
         if (json.packages.length > 0) {
           messages = json.packages
-            .reduce((p, c) => {
+            ?.reduce((p, c) => {
               return [...p, ...c.remarks];
             }, [])
             .join(",");
@@ -365,7 +374,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       console.error({ error });
     }
   }
-
+  // TODO >
   async getFulfillmentDocuments(data: Record<string, unknown>): Promise<any> {
     console.log("DELHIVERY:::::::::::::::getFulfillmentDocuments", {
       getFulfillmentDocuments: data,
