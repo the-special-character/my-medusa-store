@@ -109,85 +109,80 @@ const plugins = [
       },
     },
   },
-  // {
-  //   resolve: "medusa-plugin-auth",
-  //   /** @type {import('medusa-plugin-auth').AuthOptions} */
-  //   options: {
-  //     strict: "all", // or "none" or "store" or "admin"
-  //     google: {
-  //       clientID: GoogleClientId,
-  //       clientSecret: GoogleClientSecret,
-
-  //       admin: {
-  //         callbackUrl: `${BACKEND_URL}/admin/auth/google/cb`,
-  //         failureRedirect: `${ADMIN_URL}/login`,
-
-  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-  //         // This query param will have the priority over this configuration
-  //         successRedirect: `${ADMIN_URL}/`,
-
-  //         // authPath: '/admin/auth/google',
-  //         // authCallbackPath: '/admin/auth/google/cb',
-  //         // expiresIn: 24 * 60 * 60 * 1000,
-  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-  //         //    // implement your custom verify callback here if you need it
-  //         // }
-  //       },
-
-  //       store: {
-  //         callbackUrl: `${BACKEND_URL}/store/auth/google/cb`,
-  //         failureRedirect: `${STORE_URL}/login`,
-
-  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-  //         // This query param will have the priority over this configuration
-  //         successRedirect: `${STORE_URL}/`,
-
-  //         // authPath: '/store/auth/google',
-  //         // authCallbackPath: '/store/auth/google/cb',
-  //         // expiresIn: 24 * 60 * 60 * 1000,
-  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-  //         //    // implement your custom verify callback here if you need it
-  //         // }
-  //       },
-  //     },
-  //     facebook: {
-  //       clientID: FacebookClientId,
-  //       clientSecret: FacebookClientSecret,
-
-  //       admin: {
-  //         callbackUrl: `${BACKEND_URL}/admin/auth/facebook/cb`,
-  //         failureRedirect: `${ADMIN_URL}/login`,
-
-  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-  //         // This query param will have the priority over this configuration
-  //         successRedirect: `${ADMIN_URL}/`,
-
-  //         // authPath: '/admin/auth/facebook',
-  //         // authCallbackPath: '/admin/auth/facebook/cb',
-  //         // expiresIn: 24 * 60 * 60 * 1000,
-  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-  //         //    // implement your custom verify callback here if you need it
-  //         // }
-  //       },
-
-  //       store: {
-  //         callbackUrl: `${BACKEND_URL}/store/auth/facebook/cb`,
-  //         failureRedirect: `${STORE_URL}/login`,
-
-  //         // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
-  //         // This query param will have the priority over this configuration
-  //         successRedirect: `${STORE_URL}/`,
-
-  //         // authPath: '/store/auth/facebook',
-  //         // authCallbackPath: '/store/auth/facebook/cb',
-  //         // expiresIn: 24 * 60 * 60 * 1000,
-  //         // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
-  //         //    // implement your custom verify callback here if you need it
-  //         // }
-  //       },
-  //     },
-  //   },
-  // },
+  {
+    resolve: "medusa-plugin-auth",
+    /** @type {import('medusa-plugin-auth').AuthOptions} */
+    options: [
+      {
+        type: "google",
+        // strict: "all", // or "none" or "store" or "admin"
+        strict: "none",
+        identifier: "google",
+        clientID: GoogleClientId,
+        clientSecret: GoogleClientSecret,
+        admin: {
+          callbackUrl: `${BACKEND_URL}/admin/auth/google/cb`,
+          failureRedirect: `${ADMIN_URL}/login`,
+          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${ADMIN_URL}/`,
+          // authPath: '/admin/auth/google',
+          // authCallbackPath: '/admin/auth/google/cb',
+          // expiresIn: 24 * 60 * 60 * 1000,
+          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+          //    // implement your custom verify callback here if you need it
+          // },
+        },
+        store: {
+          callbackUrl: `${BACKEND_URL}/store/auth/google/cb`,
+          failureRedirect: `${STORE_URL}/login`,
+          // The success redirect can be overriden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${STORE_URL}/`,
+          // authPath: '/store/auth/google',
+          // authCallbackPath: '/store/auth/google/cb',
+          // expiresIn: 24 * 60 * 60 * 1000,
+          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+          //    // implement your custom verify callback here if you need it
+          // },
+        },
+      },
+      {
+        type: "facebook",
+        // strict: "all", // or "none" or "store" or "admin"
+        strict: "none",
+        identifier: "facebook",
+        clientID: FacebookClientId,
+        clientSecret: FacebookClientSecret,
+        admin: {
+          callbackUrl: `${BACKEND_URL}/admin/auth/facebook/cb`,
+          failureRedirect: `${ADMIN_URL}/login`,
+          // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${ADMIN_URL}/`,
+          // authPath: '/admin/auth/facebook',
+          // authCallbackPath: '/admin/auth/facebook/cb',
+          // expiresIn: 24 * 60 * 60 * 1000,
+          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+          //    // implement your custom verify callback here if you need it
+          // }
+        },
+        store: {
+          callbackUrl: `${BACKEND_URL}/store/auth/facebook/cb`,
+          failureRedirect: `${STORE_URL}/login`,
+          // The success redirect can be overridden from the client by adding a query param `?redirectTo=your_url` to the auth url
+          // This query param will have the priority over this configuration
+          successRedirect: `${STORE_URL}/`,
+          // authPath: '/store/auth/facebook',
+          // authCallbackPath: '/store/auth/facebook/cb',
+          // expiresIn: 24 * 60 * 60 * 1000,
+          // verifyCallback: (container, req, accessToken, refreshToken, profile, strict) => {
+          //    // implement your custom verify callback here if you need it
+          // }
+        },
+      },
+    ],
+  },
 ];
 
 const modules = {
@@ -196,7 +191,7 @@ const modules = {
   // },
   // cacheService: {
   //   resolve: "@medusajs/cache-redis",
-  //   options: { 
+  //   options: {
   //     redisUrl: REDIS_URL,
   //     ttl: 30,
   //   },
