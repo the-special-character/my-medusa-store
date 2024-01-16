@@ -73,9 +73,8 @@ class EmailSenderService extends AbstractNotificationService {
     status: string;
     data: Record<string, unknown>;
   }> {
-
     console.log("sendNotification", event);
-    
+
     if (eventData?.no_notification) return;
 
     const data = await this.notificationDataService_.fetchData(
@@ -86,10 +85,7 @@ class EmailSenderService extends AbstractNotificationService {
 
     if (!data.email) return;
 
-    const { subject, html, text } = await this.compileTemplate(
-      event,
-      data
-    );
+    const { subject, html, text } = await this.compileTemplate(event, data);
     if (!subject || (!html && !text)) {
       throw new MedusaError(
         MedusaError.Types.INVALID_DATA,
@@ -165,7 +161,6 @@ class EmailSenderService extends AbstractNotificationService {
     const to: string = config.to ? config.to : notification.to;
 
     console.log("to", to);
-    
 
     // TODO resend the notification using the same data
     // that is saved under notification.data
@@ -277,6 +272,13 @@ class EmailSenderService extends AbstractNotificationService {
           )
         )
       : null;
+    console.log({
+      subject: subjectTemplate ? subjectTemplate(data) : "",
+      html: htmlTemplate ? htmlTemplate(data) : "",
+      text: textTemplate ? textTemplate(data) : "",
+      templateId,
+      data,
+    });
 
     return {
       subject: subjectTemplate ? subjectTemplate(data) : "",
@@ -296,10 +298,11 @@ class EmailSenderService extends AbstractNotificationService {
   async listTemplates() {
     let templates = [];
     let files = await readdir(this.templatePath_);
+
     let eventIds = files.map((file) => file.replace("_", "."));
     for (let file of files) {
       const eventId = file.replace("_", ".");
-      if (validEvents.includes(eventId)) {
+      if (validEvents.map((x) => x.replace("_", ".")).includes(eventId)) {
         templates?.push({
           templateId: file,
           eventId: eventId,

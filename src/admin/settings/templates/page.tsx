@@ -220,6 +220,9 @@ const TemplateSettingsPage = () => {
           credentials: "include",
         }
       );
+      if (res.ok) {
+        getTemplates();
+      }
     }
   }
 
@@ -347,25 +350,25 @@ const TemplateSettingsPage = () => {
                             Preview
                           </button>
                         </DropdownMenu.Item>
-                        <DropdownMenu.Item className="gap-x-2">
-                          <button
-                            onClick={async () =>
-                              editTemplate(template.templateId)
-                            }
-                            className="flex flex-nowrap"
-                          >
+                        <DropdownMenu.Item
+                          onClick={async () =>
+                            editTemplate(template.templateId)
+                          }
+                          className="gap-x-2"
+                        >
+                          <button className="flex flex-nowrap">
                             <PencilSquare className="text-ui-fg-subtle mr-2" />
                             Edit
                           </button>
                         </DropdownMenu.Item>
                         <DropdownMenu.Separator />
-                        <DropdownMenu.Item className="gap-x-2 text-rose-700">
-                          <button
-                            onClick={async () =>
-                              deleteTemplate(template.templateId)
-                            }
-                            className="flex flex-nowrap"
-                          >
+                        <DropdownMenu.Item
+                          onClick={async () =>
+                            deleteTemplate(template.templateId)
+                          }
+                          className="gap-x-2 text-rose-700"
+                        >
+                          <button className="flex flex-nowrap">
                             <Trash className="text-rose-700 text-ui-fg-subtle mr-2" />
                             Delete
                           </button>
