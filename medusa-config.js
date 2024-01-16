@@ -186,17 +186,18 @@ const plugins = [
 ];
 
 const modules = {
-  // eventBus: {
-  //   resolve: "@medusajs/event-bus-local",
-  // },
-  // cacheService: {
-  //   resolve: "@medusajs/cache-redis",
-  //   options: {
-  //     redisUrl: REDIS_URL,
-  //     ttl: 30,
-  //   },
-  // },
-
+  eventBus: {
+    resolve: "@medusajs/event-bus-redis",
+    options: {
+      redisUrl: REDIS_URL
+    }
+  },
+  cacheService: {
+    resolve: "@medusajs/cache-redis",
+    options: {
+      redisUrl: REDIS_URL
+    }
+  },
   inventoryService: {
     resolve: "@medusajs/inventory",
   },
