@@ -27,11 +27,7 @@ import {
 } from "@medusajs/icons";
 import { SettingConfig } from "@medusajs/admin";
 import CodeMirror, { oneDark } from "@uiw/react-codemirror";
-import {
-  useSesTemplates,
-  useSesTemplate,
-  useSesTemplateDelete,
-} from "../../hooks";
+import { useSesTemplates } from "../../hooks";
 import NoSubjectTooltip from "../../components/NoSubjectTooltip";
 import NoTextTooltip from "../../components/NoTextTooltip";
 import NoHtmlTooltip from "../../components/NoHtmlTooltip";
@@ -58,34 +54,66 @@ const defaultTemplates = {
  </mjml>`,
 };
 
+const getTemplateById = async (templateId) => {
+  try {
+    const res = await fetch(
+      `${process.env.MEDUSA_BACKEND_URL}/admin/mailer/templates/${templateId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (res.ok) {
+      const response = await res.json();
+      return response;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 const TemplateEditor = ({
   editOpen,
   closeEdit,
   activeTemplateId,
   getTemplates,
+  currentOpenTemplate,
+  setCurrentOpenTemplate,
 }) => {
   "use client";
 
-  const response = useSesTemplate(activeTemplateId);
-  const activeTemplate = response?.data?.template;
   const [initialValue, setInitialValue] = useState(
-    activeTemplate?.mjml ||
-      defaultTemplates[activeTemplateId]?.mjml ||
-      defaultTemplates["fallback"]?.mjml
+    currentOpenTemplate?.html || ""
   );
   const [initialSubject, setInitialSubject] = useState(
-    activeTemplate?.subject ||
-      defaultTemplates[activeTemplateId]?.subject ||
-      defaultTemplates["fallback"]?.subject
+    currentOpenTemplate?.subject || ""
   );
+  const clearValues = () => {
+    setInitialSubject("");
+    setInitialValue("");
+    setCurrentOpenTemplate({});
+  };
 
-  if (activeTemplate?.html && !activeTemplate?.mjml) {
+  useEffect(() => {
+    if (!initialSubject) {
+      setInitialSubject(currentOpenTemplate?.subject);
+    }
+    if (!initialValue) {
+      setInitialValue(currentOpenTemplate?.html);
+    }
+    console.log("render", {
+      initialSubject,
+      initialValue,
+      currentOpenTemplate,
+    });
+
+    return () => {};
+  }, [editOpen]);
+  if (currentOpenTemplate?.html && !currentOpenTemplate?.mjml) {
     // warning
   }
 
-  const onChange = async function (val) {
-    console.log(val);
-  };
+  const onChange = async function (val) {};
 
   const saveEdit = async function () {
     try {
@@ -106,9 +134,9 @@ const TemplateEditor = ({
         }
       );
       if (response.ok) {
-        console.log({ response: await response.json() });
         getTemplates();
         closeEdit();
+        clearValues();
       } else {
         alert("something went wrong");
       }
@@ -123,13 +151,20 @@ const TemplateEditor = ({
       onOpenChange={(modalOpened) => {
         if (!modalOpened) {
           closeEdit();
+          clearValues();
         }
       }}
     >
       <FocusModal.Content>
         <FocusModal.Header className="flex items-end">
           <div>
-            <Button onClick={closeEdit} variant="secondary">
+            <Button
+              onClick={() => {
+                closeEdit();
+                clearValues();
+              }}
+              variant="secondary"
+            >
               Discard
             </Button>
             <Button onClick={saveEdit} className="ml-2">
@@ -179,7 +214,7 @@ const TemplateSettingsPage = () => {
 
   const response = useSesTemplates();
   const [templates, setTemplates] = useState([]);
-
+  const [currentOpenTemplate, setCurrentOpenTemplate] = useState({});
   const [editOpen, showEdit, closeEdit] = useToggleState();
   const [activeTemplateId, setActiveTemplate] = useState<string>();
   const editTemplate = (value) => {
@@ -203,8 +238,6 @@ const TemplateSettingsPage = () => {
     getTemplates();
     return () => {};
   }, []);
-
-  console.log({ templates });
 
   const dialog = usePrompt();
   async function deleteTemplate(templateId) {
@@ -230,8 +263,13 @@ const TemplateSettingsPage = () => {
     <Container className="mb-4">
       <TemplateEditor
         editOpen={editOpen}
+        currentOpenTemplate={currentOpenTemplate}
+        setCurrentOpenTemplate={setCurrentOpenTemplate}
         getTemplates={getTemplates}
-        closeEdit={closeEdit}
+        closeEdit={() => {
+          closeEdit();
+          setCurrentOpenTemplate({});
+        }}
         activeTemplateId={activeTemplateId}
       />
       <div className="flex items-start justify-between mb-6">
@@ -259,7 +297,7 @@ const TemplateSettingsPage = () => {
                      </DropdownMenu.Item>
                   </DropdownMenu.Content>
                </DropdownMenu> */}
-          <Select onValueChange={editTemplate}>
+          <Select onValueChange={(value) => editTemplate(value)}>
             <Select.Trigger>
               <PlusMini /> Add Template &nbsp;
             </Select.Trigger>
@@ -351,9 +389,13 @@ const TemplateSettingsPage = () => {
                           </button>
                         </DropdownMenu.Item>
                         <DropdownMenu.Item
-                          onClick={async () =>
-                            editTemplate(template.templateId)
-                          }
+                          onClick={async () => {
+                            const response = await getTemplateById(
+                              template.templateId
+                            );
+                            setCurrentOpenTemplate(response.template);
+                            editTemplate(template.templateId);
+                          }}
                           className="gap-x-2"
                         >
                           <button className="flex flex-nowrap">
@@ -363,9 +405,7 @@ const TemplateSettingsPage = () => {
                         </DropdownMenu.Item>
                         <DropdownMenu.Separator />
                         <DropdownMenu.Item
-                          onClick={async () =>
-                            deleteTemplate(template.templateId)
-                          }
+                          onClick={() => deleteTemplate(template.templateId)}
                           className="gap-x-2 text-rose-700"
                         >
                           <button className="flex flex-nowrap">
