@@ -106,12 +106,15 @@ const TemplateEditor = ({
         }
       );
       if (response.ok) {
+        console.log({ response: await response.json() });
         getTemplates();
         closeEdit();
       } else {
         alert("something went wrong");
       }
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 
   return (
@@ -201,6 +204,8 @@ const TemplateSettingsPage = () => {
     return () => {};
   }, []);
 
+  console.log({ templates });
+
   const dialog = usePrompt();
   async function deleteTemplate(templateId) {
     const userHasConfirmed = await dialog({
@@ -215,7 +220,6 @@ const TemplateSettingsPage = () => {
           credentials: "include",
         }
       );
-
     }
   }
 
