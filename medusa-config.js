@@ -192,13 +192,13 @@ const modules = {
       redisUrl: REDIS_URL,
     },
   },
-  cacheService: {
-    resolve: "@medusajs/cache-redis",
-    options: {
-      redisUrl: REDIS_URL,
-      ttl: 30,
-    },
-  },
+  // cacheService: {
+  //   resolve: "@medusajs/cache-redis",
+  //   options: {
+  //     redisUrl: REDIS_URL,
+  //     ttl: 30,
+  //   },
+  // },
   inventoryService: {
     resolve: "@medusajs/inventory",
   },
@@ -215,7 +215,7 @@ const projectConfig = {
   database_url: DATABASE_URL,
   admin_cors: ADMIN_CORS,
   // Uncomment the following lines to enable REDIS
-  redis_url: REDIS_URL,
+  // redis_url: REDIS_URL,
   database_extra:
     process.env.NODE_ENV !== "development"
       ? {
