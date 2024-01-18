@@ -69,8 +69,8 @@ const plugins = [
   {
     resolve: `medusa-payment-phonepe`,
     options: {
-      redirectUrl: `${process.env.STORE_URL}/api/payment-confirmed`,
-      callbackUrl: `${process.env.BACKEND_URL}/phonepe/hook`,
+      redirectUrl: `https://learningdino.com/api/payment-confirmed`,
+      callbackUrl: `https://api.learningdino.com/phonepe/hook`,
       salt: process.env.PHONEPE_SALT,
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: process.env.PHONEPE_MODE,
