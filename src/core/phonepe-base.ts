@@ -160,6 +160,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   async initiatePayment(
     context: PaymentProcessorContext
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse> {
+    this.logger.info(`initiatePayment: ${JSON.stringify(context)}`)
     const intentRequestData = this.getPaymentIntentOptions();
     const {
       email,
@@ -170,10 +171,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       customer,
       paymentSessionData,
     } = context;
-    // PhonePeBase.sequenceCount++;
-
-    console.log("PhonePeBase.sequenceCount", PhonePeBase.sequenceCount);
-    
+    PhonePeBase.sequenceCount++;
     const request = await this.phonepe_.createPhonePeStandardRequest(
       amount.toString(),
       (paymentSessionData.merchantTransactionId as string) ?? resource_id,
