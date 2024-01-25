@@ -159,7 +159,8 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   }
 
   async initiatePayment(
-    context: PaymentProcessorContext
+    context: PaymentProcessorContext,
+    isUpdate?: boolean
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse> {
     this.logger.info(`initiatePayment: ${JSON.stringify(context)}`);
     const intentRequestData = this.getPaymentIntentOptions();
@@ -172,7 +173,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       customer,
       paymentSessionData,
     } = context;
-    PhonePeBase.sequenceCount++;
+    if (!isUpdate) {
+      PhonePeBase.sequenceCount++;
+    }
     const request = await this.phonepe_.createPhonePeStandardRequest(
       amount.toString(),
       (paymentSessionData.merchantTransactionId as string) ?? resource_id,
@@ -445,14 +448,14 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse | void> {
     /** phonepe doesn't allow you to update an ongoing payment, you need to initiate new one */
     /* if (phonepeId !== (paymentSessionData.customer as Customer).id) {*/
-    // this.logger.info(
-    //   `update request context from medusa: ${JSON.stringify(context)}`
-    // );
-    // const result = await this.initiatePayment(context);
-    // return result;
-    return {
-      session_data: context.paymentSessionData,
-    };
+    this.logger.info(
+      `update request context from medusa: ${JSON.stringify(context)}`
+    );
+    const result = await this.initiatePayment(context, true);
+    return result;
+    // return {
+    //   session_data: context.paymentSessionData,
+    // };
   }
 
   async updatePaymentData(
@@ -461,7 +464,8 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   ): Promise<Record<string, unknown> | PaymentProcessorError> {
     if (data.amount) {
       return await this.initiatePayment(
-        data as unknown as PaymentProcessorContext
+        data as unknown as PaymentProcessorContext,
+        true
       );
     } else {
       return data as any;
