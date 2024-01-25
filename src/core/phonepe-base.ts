@@ -260,7 +260,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       };
       const status = await this.checkAuthorisationWithBackOff({
         merchantId,
-        merchantTransactionId,
+        merchantTransactionId: (context?.idempotency_key as { idempotency_key: string })?.idempotency_key as string || merchantTransactionId,
       });
 
       console.log("status", status);
