@@ -66,17 +66,17 @@ const plugins = [
       cache_control: process.env.S3_CACHE_CONTROL,
     },
   },
-  {
-    resolve: `medusa-payment-phonepe`,
-    options: {
-      redirectUrl: `http://localhost:3000/api/payment-confirmed`,
-      callbackUrl: `http://localhost:9000/phonepe/hook`,
-      salt: process.env.PHONEPE_SALT,
-      merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
-      mode: process.env.PHONEPE_MODE,
-      redirectMode: process.env.PHONEPE_REDIRECT_MODE,
-    },
-  },
+  // {
+  //   resolve: `medusa-payment-phonepe`,
+  //   options: {
+  //     redirectUrl: `http://localhost:3000/api/payment-confirmed`,
+  //     callbackUrl: `http://localhost:9000/phonepe/hook`,
+  //     salt: process.env.PHONEPE_SALT,
+  //     merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
+  //     mode: process.env.PHONEPE_MODE,
+  //     redirectMode: process.env.PHONEPE_REDIRECT_MODE,
+  //   },
+  // },
   {
     resolve: `medusa-plugin-meilisearch`,
     options: {
