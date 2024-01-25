@@ -250,6 +250,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         data: PaymentProcessorSessionResponse["session_data"];
       }
   > {
+    this.logger.info(`authorizePayment paymentSessionData: ${JSON.stringify(paymentSessionData)}`)
+    this.logger.info(`authorizePayment context: ${JSON.stringify(context)}`)
+
     try {
       const { merchantId, merchantTransactionId } = paymentSessionData.data as {
         merchantId: string;
