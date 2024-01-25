@@ -163,6 +163,7 @@ export class PhonePeWrapper {
     }
 
     const apiEndpoint = apiNewEndpoint ?? "/pg/v1/status";
+
     const url =
       this.options.mode == "uat"
         ? "https://api-preprod.phonepe.com/apis/pg-sandbox"
@@ -172,6 +173,7 @@ export class PhonePeWrapper {
       merchantId,
       merchantTransactionId
     );
+    
     const headers = {
       "Content-Type": "application/json",
       accept: "application/json",
@@ -188,8 +190,6 @@ export class PhonePeWrapper {
       headers,
     });
 
-    console.log(result);
-    
     return result.data;
   }
 

@@ -476,7 +476,6 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
    */
   constructWebhookEvent(encodedData: string, signature: string): PhonePeEvent {
     const decodedBody = JSON.parse(atob(encodedData)) as PhonePeS2SResponse;
-    console.log(decodedBody);
     if (
       this.phonepe_.validateWebhook(encodedData, signature, this.options_.salt)
     ) {
