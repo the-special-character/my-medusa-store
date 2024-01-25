@@ -64,7 +64,8 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       salt: process.env.PHONEPE_SALT,
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: process.env.PHONEPE_MODE as PhonePeOptions["mode"],
-      callbackUrl: `${process.env.BACKEND_URL}/phonepe/hooks` ?? "http://localhost:9004",
+      callbackUrl:
+        `${process.env.BACKEND_URL}/phonepe/hooks` ?? "http://localhost:9004",
       redirectMode: "POST",
       redirectUrl: `${process.env.STORE_URL}/api/payment-confirmed`,
     };
@@ -133,9 +134,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
           `response from phonepe: ${JSON.stringify(paymentStatusResponse)}`
         );
       }
-      
+
       console.log(paymentStatusResponse);
-      
+
       switch (paymentStatusResponse.code) {
         case "PAYMENT_PENDING":
           return PaymentSessionStatus.PENDING;
@@ -160,7 +161,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   async initiatePayment(
     context: PaymentProcessorContext
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse> {
-    this.logger.info(`initiatePayment: ${JSON.stringify(context)}`)
+    this.logger.info(`initiatePayment: ${JSON.stringify(context)}`);
     const intentRequestData = this.getPaymentIntentOptions();
     const {
       email,
@@ -250,8 +251,16 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         data: PaymentProcessorSessionResponse["session_data"];
       }
   > {
-    this.logger.info(`authorizePayment paymentSessionData: ${JSON.stringify(paymentSessionData)}`)
-    this.logger.info(`authorizePayment context: ${JSON.stringify(context)}`)
+    this.logger.info(
+      `authorizePayment paymentSessionData: ${JSON.stringify(
+        paymentSessionData
+      )}`
+    );
+    this.logger.info(
+      `authorizePayment paymentSessionData: ${JSON.stringify(
+        paymentSessionData
+      )}`
+    );
 
     try {
       const { merchantId, merchantTransactionId } = paymentSessionData.data as {
@@ -260,7 +269,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       };
       const status = await this.checkAuthorisationWithBackOff({
         merchantId,
-        merchantTransactionId: (context?.idempotency_key as { idempotency_key: string })?.idempotency_key as string || merchantTransactionId,
+        merchantTransactionId,
       });
 
       console.log("status", status);
@@ -436,17 +445,20 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse | void> {
     /** phonepe doesn't allow you to update an ongoing payment, you need to initiate new one */
     /* if (phonepeId !== (paymentSessionData.customer as Customer).id) {*/
-    this.logger.info(
-      `update request context from medusa: ${JSON.stringify(context)}`
-    );
-    const result = await this.initiatePayment(context);
-    return result;
+    // this.logger.info(
+    //   `update request context from medusa: ${JSON.stringify(context)}`
+    // );
+    // const result = await this.initiatePayment(context);
+    // return result;
+    return {
+      session_data: context.paymentSessionData,
+    };
   }
 
   async updatePaymentData(
     sessionId: string,
     data: Record<string, unknown>
-  ): Promise<any> {
+  ): Promise<Record<string, unknown> | PaymentProcessorError> {
     if (data.amount) {
       return await this.initiatePayment(
         data as unknown as PaymentProcessorContext
