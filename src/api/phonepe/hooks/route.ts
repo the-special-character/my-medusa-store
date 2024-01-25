@@ -9,7 +9,7 @@ export async function POST(
   console.log("POST Event");
 
   let event: PhonePeEvent;
-  
+
   try {
     event = constructWebhook({
       signature: req.headers["x-verify"] as string,
@@ -25,6 +25,9 @@ export async function POST(
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
+
+  console.log(event);
+  
 
   const paymentIntent = event.data.object as unknown as PhonePeS2SResponse;
 

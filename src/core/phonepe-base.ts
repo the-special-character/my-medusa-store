@@ -170,7 +170,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       customer,
       paymentSessionData,
     } = context;
-    PhonePeBase.sequenceCount++;
+    // PhonePeBase.sequenceCount++;
     const request = await this.phonepe_.createPhonePeStandardRequest(
       amount.toString(),
       (paymentSessionData.merchantTransactionId as string) ?? resource_id,
