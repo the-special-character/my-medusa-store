@@ -26,8 +26,7 @@ export async function POST(
     return;
   }
 
-  console.log(event);
-  
+  console.log(JSON.stringify(event));
 
   const paymentIntent = event.data.object as unknown as PhonePeS2SResponse;
 

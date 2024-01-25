@@ -173,7 +173,7 @@ export class PhonePeWrapper {
       merchantId,
       merchantTransactionId
     );
-    
+
     const headers = {
       "Content-Type": "application/json",
       accept: "application/json",
@@ -184,6 +184,7 @@ export class PhonePeWrapper {
     const requestUrl = `${url}${apiEndpoint}/${merchantId}/${merchantTransactionId}`;
 
     console.log("requestUrl", requestUrl);
+    
     console.log("headers",JSON.stringify(headers));
 
     const result = await axios.get(requestUrl, {
