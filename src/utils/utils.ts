@@ -45,6 +45,9 @@ export function constructWebhook({
   logger.info(
     `signature ${signature}\n encoded: ${JSON.stringify(encodedBody)}`
   );
+  console.log(
+    `signature ${signature}\n encoded: ${JSON.stringify(encodedBody)}`
+  );
   return phonepeProviderService.constructWebhookEvent(
     encodedBody.response,
     signature
@@ -94,6 +97,7 @@ export async function handlePaymentHook({
   const cartIdParts = cartId.split("_");
   cartId = `${cartIdParts[0]}_${cartIdParts[1]}`;
   logger.info("computed cart: " + cartId);
+  console.log("computed cart: " + cartId);
   const resourceId = cartId;
 
   switch (event.type) {
@@ -110,6 +114,7 @@ export async function handlePaymentHook({
       } catch (err) {
         const message = buildError(event.type, err);
         logger.error(message);
+        console.log(message);
         return { statusCode: 409 };
       }
 

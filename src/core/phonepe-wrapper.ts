@@ -180,9 +180,16 @@ export class PhonePeWrapper {
     };
 
     const requestUrl = `${url}${apiEndpoint}/${merchantId}/${merchantTransactionId}`;
+
+    console.log("requestUrl", requestUrl);
+    console.log("headers",JSON.stringify(headers));
+
     const result = await axios.get(requestUrl, {
       headers,
     });
+
+    console.log(result);
+    
     return result.data;
   }
 
