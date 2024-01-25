@@ -1,6 +1,6 @@
 import { authenticate, type MiddlewaresConfig } from "@medusajs/medusa";
 import cors from "cors";
-import { raw } from "body-parser"
+import bodyParser from "body-parser";
 
 const adminCorsOptions = {
   origin: "*",
@@ -14,11 +14,16 @@ export const config: MiddlewaresConfig = {
       middlewares: [cors(adminCorsOptions), authenticate()],
     },
     {
-      method: ["POST", "PUT"],
+      method: ["POST", "OPTIONS"],
       matcher: "/phonepe/*",
       bodyParser: false,
-      middlewares: [raw({ type: "application/json" })],
-      // middlewares: [cors(adminCorsOptions), authenticate()],
+      middlewares: [
+        cors({
+          origin: /.*.phonepe.com\/apis/gm,
+          methods: "POST,OPTIONS",
+        }),
+        bodyParser.json({ type: "application/json" }),
+      ],
     },
     {
       matcher: "/mailer/templates/*",

@@ -133,6 +133,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
           `response from phonepe: ${JSON.stringify(paymentStatusResponse)}`
         );
       }
+      
+      console.log(paymentStatusResponse);
+      
       switch (paymentStatusResponse.code) {
         case "PAYMENT_PENDING":
           return PaymentSessionStatus.PENDING;
@@ -255,6 +258,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         merchantId,
         merchantTransactionId,
       });
+
+      console.log("status", status);
+
       return { data: paymentSessionData, status };
     } catch (e) {
       const error: PaymentProcessorError = {
