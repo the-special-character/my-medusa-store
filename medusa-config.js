@@ -69,8 +69,8 @@ const plugins = [
   {
     resolve: `medusa-payment-phonepe`,
     options: {
-      redirectUrl: `https://learningdino.com/api/payment-confirmed`,
-      callbackUrl: `https://api.learningdino.com/phonepe/hook`,
+      redirectUrl: `http://localhost:3000/api/payment-confirmed`,
+      callbackUrl: `http://localhost:9000/phonepe/hook`,
       salt: process.env.PHONEPE_SALT,
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: process.env.PHONEPE_MODE,
@@ -107,6 +107,18 @@ const plugins = [
           }),
         },
       },
+    },
+  },
+  {
+    resolve: `medusa-payment-razorpay`,
+    options: {
+      key_id: process.env.RAZORPAY_ID,
+      key_secret: process.env.RAZORPAY_SECRET,
+      razorpay_account: process.env.RAZORPAY_ACCOUNT,
+      automatic_expiry_period: 30 /*any value between 12minuts and 30 days expressed in minutes*/,
+      manual_expiry_period: 20,
+      refund_speed: "normal",
+      webhook_secret: process.env.RAZORPAY_SECRET,
     },
   },
   {
@@ -235,6 +247,6 @@ module.exports = {
     product_categories: true,
     sales_channels: true,
     publishable_api_keys: true,
-    tax_inclusive_pricing: true    
+    tax_inclusive_pricing: true,
   },
 };
