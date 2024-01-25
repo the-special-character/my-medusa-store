@@ -64,9 +64,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       salt: process.env.PHONEPE_SALT,
       merchantId: process.env.PHONEPE_MERCHANT_ACCOUNT,
       mode: "uat",
-      callbackUrl: "http://localhost:9004/phonepe/hook" ?? "http://localhost:9004",
+      callbackUrl: `${process.env.BACKEND_URL}/phonepe/hook` ?? "http://localhost:9004",
       redirectMode: "POST",
-      redirectUrl: "http://localhost:3000/api/payment-confirmed",
+      redirectUrl: `${process.env.STORE_URL}/api/payment-confirmed`,
     };
 
     this.init();
