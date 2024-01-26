@@ -169,13 +169,9 @@ export class PhonePeWrapper {
         ? "https://api-preprod.phonepe.com/apis/pg-sandbox"
         : this.url;
 
-    const arr = merchantTransactionId.split("_");
-
-    const transactionId = `${arr[0]}_${arr[1]}_${Number(arr[2]) - 1}`;
-
     const encodedMessage = createGetChecksumHeader(
       merchantId,
-      transactionId
+      merchantTransactionId
     );
 
     const headers = {
@@ -185,11 +181,11 @@ export class PhonePeWrapper {
       "X-MERCHANT-ID": merchantId,
     };
 
-    const requestUrl = `${url}${apiEndpoint}/${merchantId}/${transactionId}`;
+    const requestUrl = `${url}${apiEndpoint}/${merchantId}/${merchantTransactionId}`;
 
     console.log("requestUrl", requestUrl);
-
-    console.log("headers", JSON.stringify(headers));
+    
+    console.log("headers",JSON.stringify(headers));
 
     const result = await axios.get(requestUrl, {
       headers,

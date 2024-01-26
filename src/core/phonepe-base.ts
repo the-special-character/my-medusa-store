@@ -110,23 +110,21 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
     return options;
   }
 
-  async getPaymentStatus({
-    merchantId,
-    merchantTransactionId,
-    data,
-  }: {
-    merchantId: string;
-    merchantTransactionId: string;
-    data?: any;
-  }): Promise<PaymentSessionStatus> {
+  async getPaymentStatus(
+    paymentSessionData: Record<string, unknown>
+  ): Promise<PaymentSessionStatus> {
     try {
-      const currentMerchantId = merchantId ?? data.merchantId;
-      const currentMerchantTransactionId =
-        merchantTransactionId ?? data.merchantTransactionId;
+      console.log(`base getPaymentStatus: ${JSON.stringify(paymentSessionData)}`);
+      
+      const { merchantId, merchantTransactionId } = paymentSessionData.data as {
+        merchantId: string;
+        merchantTransactionId: string;
+      };
+
       const paymentStatusResponse =
         (await this.phonepe_.getPhonePeTransactionStatus(
-          currentMerchantId,
-          currentMerchantTransactionId
+          merchantId,
+          merchantTransactionId
         )) as PaymentCheckStatusResponse;
       // const data = paymentStatusResponse as PaymentCheckStatusResponse;
       if (this.options_.enabledDebugLogging) {
@@ -159,8 +157,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   }
 
   async initiatePayment(
-    context: PaymentProcessorContext,
-    isUpdate?: boolean
+    context: PaymentProcessorContext
   ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse> {
     this.logger.info(`initiatePayment: ${JSON.stringify(context)}`);
     const intentRequestData = this.getPaymentIntentOptions();
@@ -223,6 +220,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       return this.buildError("initialization error", e);
     }
   }
+
   async intermediatePaymentResponse(
     request: PaymentRequest
   ): Promise<PaymentResponse> {
@@ -258,9 +256,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       )}`
     );
     this.logger.info(
-      `authorizePayment paymentSessionData: ${JSON.stringify(
-        context
-      )}`
+      `authorizePayment paymentSessionData: ${JSON.stringify(context)}`
     );
 
     try {
@@ -269,10 +265,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         merchantTransactionId: string;
       };
 
-      const status = await this.checkAuthorisationWithBackOff({
-        merchantId,
-        merchantTransactionId,
-      });
+      const status = await this.checkAuthorisationWithBackOff(paymentSessionData);
 
       console.log("status", status);
 
@@ -286,25 +279,25 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   }
 
   async checkAuthorisationWithBackOff(
-    t: TransactionIdentifier
+    paymentSessionData: Record<string, unknown>
   ): Promise<PaymentSessionStatus> {
     try {
-      return await this.retryFunction(t, 3e3, 10);
+      return await this.retryFunction(paymentSessionData, 3e3, 10);
     } catch (err) {
       if (isTooManyTries(err)) {
         try {
-          return await this.retryFunction(t, 6e3, 10);
+          return await this.retryFunction(paymentSessionData, 6e3, 10);
         } catch (err) {
           if (isTooManyTries(err)) {
             try {
-              return await this.retryFunction(t, 10e3, 6);
+              return await this.retryFunction(paymentSessionData, 10e3, 6);
             } catch (err) {
               if (isTooManyTries(err)) {
                 try {
-                  return await this.retryFunction(t, 30e3, 2);
+                  return await this.retryFunction(paymentSessionData, 30e3, 2);
                 } catch (err) {
                   if (isTooManyTries(err)) {
-                    return await this.retryFunction(t, 60e3, 15);
+                    return await this.retryFunction(paymentSessionData, 60e3, 15);
                   }
                   return PaymentSessionStatus.PENDING;
                 }
@@ -318,14 +311,14 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   }
 
   async retryFunction(
-    t: TransactionIdentifier,
+    paymentSessionData: Record<string, unknown>,
     delay: number,
     maxRetry: number
   ): Promise<PaymentSessionStatus> {
     return await retryAsync(
       async () => {
         /* do something */
-        return await this.getPaymentStatus(t);
+        return await this.getPaymentStatus(paymentSessionData);
       },
       {
         delay: delay,
@@ -427,10 +420,12 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
     PaymentProcessorError | PaymentProcessorSessionResponse["session_data"]
   > {
     try {
-      const request = paymentSessionData.data as PaymentResponseData;
+      console.log(`base retrievePayment: ${JSON.stringify(paymentSessionData)}`);
+      const { merchantId, merchantTransactionId } =
+        paymentSessionData.data as PaymentResponseData;
       const intent = await this.phonepe_.getPhonePeTransactionStatus(
-        request.merchantId,
-        request.merchantTransactionId
+        merchantId,
+        merchantTransactionId
       );
       if (this.options_.enabledDebugLogging) {
         this.logger.info(`response from phonepe: ${JSON.stringify(intent)}`);
@@ -452,9 +447,6 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
     );
     const result = await this.initiatePayment(context);
     return result;
-    // return {
-    //   session_data: context.paymentSessionData,
-    // };
   }
 
   async updatePaymentData(
