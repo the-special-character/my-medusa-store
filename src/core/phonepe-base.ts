@@ -121,10 +121,14 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         merchantTransactionId: string;
       };
 
+      const arr = merchantTransactionId.split('_')
+
+      const transactionId = `${arr[0]}_${arr[1]}_${Number(arr[2]) - 1}`;
+
       const paymentStatusResponse =
         (await this.phonepe_.getPhonePeTransactionStatus(
           merchantId,
-          merchantTransactionId
+          transactionId
         )) as PaymentCheckStatusResponse;
       // const data = paymentStatusResponse as PaymentCheckStatusResponse;
       if (this.options_.enabledDebugLogging) {
