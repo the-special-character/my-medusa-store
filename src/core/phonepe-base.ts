@@ -173,9 +173,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
       customer,
       paymentSessionData,
     } = context;
-    if (!isUpdate) {
-      PhonePeBase.sequenceCount++;
-    }
+    PhonePeBase.sequenceCount++;
     const request = await this.phonepe_.createPhonePeStandardRequest(
       amount.toString(),
       (paymentSessionData.merchantTransactionId as string) ?? resource_id,
@@ -261,7 +259,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
     );
     this.logger.info(
       `authorizePayment paymentSessionData: ${JSON.stringify(
-        paymentSessionData
+        context
       )}`
     );
 
@@ -270,6 +268,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         merchantId: string;
         merchantTransactionId: string;
       };
+      
       const status = await this.checkAuthorisationWithBackOff({
         merchantId,
         merchantTransactionId,
@@ -451,7 +450,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
     this.logger.info(
       `update request context from medusa: ${JSON.stringify(context)}`
     );
-    const result = await this.initiatePayment(context, true);
+    const result = await this.initiatePayment(context);
     return result;
     // return {
     //   session_data: context.paymentSessionData,
@@ -464,8 +463,7 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
   ): Promise<Record<string, unknown> | PaymentProcessorError> {
     if (data.amount) {
       return await this.initiatePayment(
-        data as unknown as PaymentProcessorContext,
-        true
+        data as unknown as PaymentProcessorContext
       );
     } else {
       return data as any;
