@@ -269,13 +269,9 @@ abstract class PhonePeBase extends AbstractPaymentProcessor {
         merchantTransactionId: string;
       };
 
-      const arr = merchantTransactionId.split('_');
-
-      const transactionId = `${arr[0]}_${arr[1]}_${Number(arr[2]) - 1}`
-
       const status = await this.checkAuthorisationWithBackOff({
         merchantId,
-        merchantTransactionId: transactionId,
+        merchantTransactionId,
       });
 
       console.log("status", status);
