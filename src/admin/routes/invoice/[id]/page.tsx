@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 import { MedusaProvider } from "medusa-react";
 import { QueryClient } from "@tanstack/react-query";
-import { PDFViewer } from "@react-pdf/renderer";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import { Page, Text, View, Document, StyleSheet, PDFViewer } from "@react-pdf/renderer";
 import { useAdminOrder } from "medusa-react";
 
 const queryClient = new QueryClient();
