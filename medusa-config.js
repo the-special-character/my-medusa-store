@@ -45,6 +45,7 @@ const FacebookClientSecret = process.env.FACEBOOK_CLIENT_SECRET || "";
 const plugins = [
   `medusa-fulfillment-manual`,
   `medusa-payment-manual`,
+  "@medusajs/admin",
   {
     resolve: "@medusajs/admin",
     /** @type {import('@medusajs/admin').PluginOptions} */
