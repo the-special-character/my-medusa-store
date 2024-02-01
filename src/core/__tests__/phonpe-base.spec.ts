@@ -33,7 +33,7 @@ import {
 // import { PaymentIntentDataByStatus } from "../../__fixtures__/data";
 import { FindOptionsUtils } from "typeorm";
 import PhonePeBase from "../phonepe-base";
-import { createPostCheckSumHeader } from "../../utils/utils";
+import { createPostCheckSumHeader } from "../../utils/phonepe";
 import { isMocksEnabled } from "../../__mocks__/phonepe";
 import { PaymentIntentDataByStatus } from "../../__fixtures__/data";
 let config: PhonePeOptions = {

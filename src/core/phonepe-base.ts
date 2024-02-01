@@ -42,7 +42,7 @@ import {
 } from "../types/phonepe";
 import { MedusaError } from "@medusajs/utils";
 import { PhonePeWrapper } from "./phonepe-wrapper";
-import { buildError } from "../utils/utils";
+import { buildError } from "../utils/phonepe";
 import { isTooManyTries, retryAsync } from "ts-retry";
 
 export type TransactionIdentifier = {

@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
 import { PhonePeEvent, PhonePeS2SResponse } from "../../../types/phonepe";
-import { constructWebhook, handlePaymentHook } from "../../../utils/utils";
+import { constructWebhook, handlePaymentHook } from "../../../utils/phonepe";
 
 export async function POST(
   req: MedusaRequest,

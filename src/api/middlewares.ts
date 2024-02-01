@@ -26,6 +26,18 @@ export const config: MiddlewaresConfig = {
       ],
     },
     {
+      method: ["POST", "OPTIONS"],
+      matcher: "/razorpay/*",
+      bodyParser: false,
+      middlewares: [
+        cors({
+          origin: /.*.phonepe.com\/apis/gm,
+          methods: "POST,OPTIONS",
+        }),
+        bodyParser.json({ type: "application/json" }),
+      ],
+    },
+    {
       matcher: "/mailer/templates/*",
       middlewares: [cors(adminCorsOptions), authenticate()],
     },
