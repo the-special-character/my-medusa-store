@@ -3,8 +3,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 const adminCorsOptions = {
-  origin: "*",
-  credentials: true,
+	origin: "*",
+	credentials: true,
 };
 
 export const config: MiddlewaresConfig = {
