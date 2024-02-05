@@ -142,8 +142,8 @@ const page = (props: Props) => {
 							href={`/a/customers/${info.row.original.customer.id}`}
 							className="text-blue-50 font-bold flex gap-2"
 						>
-							<span>{info.row.original.customer.first_name}</span>
-							<span>{info.row.original.customer.last_name}</span>
+							<span>{info.row.original.customer.first_name || info.row.original.shipping_address.first_name}</span>
+							<span>{info.row.original.customer.last_name || info.row.original.shipping_address.last_name}</span>
 						</a>
 					)}
 				</>
