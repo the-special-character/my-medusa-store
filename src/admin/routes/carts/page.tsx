@@ -67,14 +67,14 @@ const page = (props: Props) => {
 	const getAllProducts = useCallback(async () => {
 		try {
 			const response = await fetch(
-				`${process.env.MEDUSA_BACKEND_URL}/admin/cart-info?limit=10`,
+				`${process.env.MEDUSA_BACKEND_URL}/admin/pending-cart?limit=10`,
 				{
 					credentials: "include",
 				}
 			);
 
 			const res = await response.json();
-			return setCarts(res?.cartList);
+			return setCarts(res?.data);
 		} catch (error) {
 			console.log(error);
 		}
