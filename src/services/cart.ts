@@ -33,7 +33,12 @@ class CartService extends MedusaCartService {
 				},
 			],
 			{
-				relations: ["payment_sessions", "customer", "shipping_address"],
+				relations: [
+					"payment_sessions",
+					"customer",
+					"shipping_address",
+					"items",
+				],
 			}
 		);
 
