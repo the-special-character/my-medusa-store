@@ -40,6 +40,7 @@ class CartService extends MedusaCartService {
 					"shipping_address",
 					"items",
 				],
+        order: { ["updated_at"]: "DESC" },
 			}
 		);
 
