@@ -10,6 +10,10 @@ const adminCorsOptions = {
 export const config: MiddlewaresConfig = {
   routes: [
     {
+      matcher: "admin/pending-cart",
+      middlewares: [cors(adminCorsOptions), authenticate()],
+    },
+    {
       matcher: "/mailer/templates",
       middlewares: [cors(adminCorsOptions), authenticate()],
     },
