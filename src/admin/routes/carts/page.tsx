@@ -149,12 +149,12 @@ const page = (props: Props) => {
 				</>
 			),
 		}),
-		columnHelper.accessor("id", {
-			header: "Cart Id",
+		columnHelper.accessor("shipping_address", {
+			header: "Phone Number",
 			cell: (info) => (
-				<span className="overflow-hidden text-ellipsis whitespace-nowrap">
-					{info.getValue()}
-				</span>
+				<a href={`tel:${info.row.original.shipping_address.phone}`} className="text-blue-50 font-bold flex gap-2">
+					{info.row.original.shipping_address.phone}
+				</a>
 			),
 		}),
 		columnHelper.accessor("items", {
