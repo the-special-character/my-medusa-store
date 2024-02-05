@@ -1,8 +1,11 @@
-import { Lifetime } from "awilix"
-import { 
-    CartType,
+import { Lifetime } from "awilix";
+import {
+  FindConfig,
+  Selector,
+  TransactionBaseService,
+  buildQuery,
   CartService as MedusaCartService,
-} from "@medusajs/medusa"
+} from "@medusajs/medusa";
 import CartRepository from "@medusajs/medusa/dist/repositories/cart";
 import { IsNull, Not } from "typeorm";
 
@@ -11,29 +14,31 @@ class CartService extends MedusaCartService {
   static LIFE_TIME = Lifetime.SCOPED;
   protected readonly cartRepository_: typeof CartRepository;
 
-
   constructor(container) {
     super(container);
 
     this.cartRepository_ = container.cartRepository;
   }
 
-
   async getPendingCartItems() {
-    return await this.cartRepository_.findAndCount({
-        loadRelationIds: true,
-        relations: ["payment_sessions"],
-        order: { ['created_at']: 'DESC' },
-        where: [
-            {
-                payment_sessions: {
-                    status: 'pending',
-                    is_initiated: true
-                }
-            }
-        ],
-    })
+    const cartRepo = this.activeManager_.withRepository(this.cartRepository_);
+
+    const query = buildQuery(
+      [
+        {
+          payment_sessions: {
+            status: "pending",
+            is_initiated: true,
+          },
+        },
+      ],
+      {
+        relations: ["payment_sessions", "customer", "shipping_address"],
+      }
+    );
+
+    return await cartRepo.findAndCount(query);
   }
 }
 
-export default CartService
+export default CartService;
