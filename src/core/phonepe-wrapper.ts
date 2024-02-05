@@ -9,7 +9,7 @@ import {
   createPostRefundChecksumHeader,
   createPostValidateVpaChecksumHeader,
   verifyPostCheckSumHeader,
-} from "../utils/utils";
+} from "../utils/phonepe";
 import {
   PaymentCheckStatusResponse,
   PaymentRequest,

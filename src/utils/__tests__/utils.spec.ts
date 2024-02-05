@@ -5,7 +5,7 @@ import {
   buildError,
   createPostCheckSumHeader,
   isPaymentCollection,
-} from "../utils";
+} from "../phonepe";
 import { sampleMerchantData, testCheckSumValue } from "../__fixtures__/data";
 import { describe, afterEach, expect, jest, it } from "@jest/globals";
 import dotenv from "dotenv";
