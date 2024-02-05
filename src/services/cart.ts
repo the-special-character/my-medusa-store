@@ -1,5 +1,11 @@
 import { Lifetime } from "awilix";
-import { CartType, CartService as MedusaCartService } from "@medusajs/medusa";
+import {
+	FindConfig,
+	Selector,
+	TransactionBaseService,
+	buildQuery,
+	CartService as MedusaCartService,
+} from "@medusajs/medusa";
 import CartRepository from "@medusajs/medusa/dist/repositories/cart";
 import { IsNull, Not } from "typeorm";
 
@@ -15,11 +21,10 @@ class CartService extends MedusaCartService {
 	}
 
 	async getPendingCartItems() {
-		return await this.cartRepository_.findAndCount({
-			loadRelationIds: true,
-			relations: ["payment_sessions", "shipping_address", "customer", "items"],
-			order: { ["created_at"]: "DESC" },
-			where: [
+		const cartRepo = this.activeManager_.withRepository(this.cartRepository_);
+
+		const query = buildQuery(
+			[
 				{
 					payment_sessions: {
 						status: "pending",
@@ -27,7 +32,12 @@ class CartService extends MedusaCartService {
 					},
 				},
 			],
-		});
+			{
+				relations: ["payment_sessions", "customer", "shipping_address"],
+			}
+		);
+
+		return await cartRepo.findAndCount(query);
 	}
 }
 
