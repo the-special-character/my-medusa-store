@@ -26,6 +26,7 @@ class CartService extends MedusaCartService {
 		const query = buildQuery(
 			[
 				{
+					customer_id: Not(IsNull()),
 					payment_sessions: {
 						status: "pending",
 						is_initiated: true,
