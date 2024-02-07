@@ -252,17 +252,14 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
     console.log("DELHIVERY:::::::::::::::cancelFulfillment", {
       cancelFulfillment: fulfillment,
     });
-    const res = await this.axiosInstance_.post(`/api/p/edit`, {
-      // waybill generated from creating shipment
-      waybill:
-        // @ts-ignore
-        fulfillment?.packages?.length > 0
-          ? fulfillment?.packages[0]?.waybill
-          : "",
+
+    const res = await Promise.all(fulfillment?.packages?.map(x => this.axiosInstance_.post(`/api/p/edit`, {
+      waybill: x.waybill,
       cancellation: true,
-    });
+    })) || [])
+
     console.log("DELHIVERY:::::::::::::::cancelFulfillment", {
-      data: JSON.stringify(res.data),
+      data: JSON.stringify(res.map(x => x.data)),
     });
     return {};
   }
