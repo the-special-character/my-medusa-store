@@ -23,7 +23,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   orderService_: OrderService;
   stockLocationService_: StockLocationService;
 
-  constructor(container, config?: Record<string, unknown>) {
+  constructor(container) {
     super(container);
 
     const {
@@ -103,13 +103,14 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   // COMPLETED
   async validateOption(data: { [x: string]: unknown }): Promise<boolean> {
     console.log("DELHIVERY:::::::::::::::validateOption", data);
-    return true;
+    return ["delhivery-surface", "delhivery-express"].indexOf(data.id) >= 0;
   }
   // COMPLETED
   async canCalculate(data: { [x: string]: unknown }): Promise<boolean> {
     console.log("DELHIVERY:::::::::::::::canCalculate", data);
     return data.id == "delhivery-surface" || data.id == "delhivery-express";
   }
+  
   // COMPLETED
   async calculatePrice(
     optionData: { [x: string]: unknown },
@@ -197,7 +198,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           shipment_height: x.variant.height,
           weight: x.variant.weight,
           seller_gst_tin: "",
-          shipping_mode: "Express",
+          shipping_mode: data?.id === "delhivery-express" ?  "Express" : "Surface" ,
           address_type: "home",
         })),
         pickup_location: {
