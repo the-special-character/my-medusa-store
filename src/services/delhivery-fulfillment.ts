@@ -250,7 +250,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   // COMPLETED
   async cancelFulfillment(fulfillment: Record<string, unknown>): Promise<any> {
     console.log("DELHIVERY:::::::::::::::cancelFulfillment", {
-      cancelFulfillment: fulfillment?.packages,
+      cancelFulfillment: fulfillment,
     });
     const res = await this.axiosInstance_.post(`/api/p/edit`, {
       // waybill generated from creating shipment
