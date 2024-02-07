@@ -14,6 +14,11 @@ import { Lifetime } from "awilix";
 import { CreateReturnType } from "@medusajs/medusa/dist/types/fulfillment-provider";
 import axios, { AxiosInstance } from "axios";
 
+type fulfillmentPackageType = {
+  status: string;
+  waybill: string;
+}
+
 class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
   static LIFE_TIME = Lifetime.SCOPED;
@@ -253,7 +258,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       cancelFulfillment: fulfillment,
     });
 
-    const res = await Promise.all(fulfillment?.packages?.map(x => this.axiosInstance_.post(`/api/p/edit`, {
+    const res = await Promise.all((fulfillment?.packages as fulfillmentPackageType[])?.map(x => this.axiosInstance_.post(`/api/p/edit`, {
       waybill: x.waybill,
       cancellation: true,
     })) || [])
