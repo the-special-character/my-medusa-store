@@ -171,9 +171,9 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
             `${order?.shipping_address?.address_1} ${order?.shipping_address?.address_2}` ||
             "8 ganeshkunj",
           pin: order?.shipping_address?.postal_code,
-          city: order?.shipping_address?.city || "ahmedabad",
+          city: order?.shipping_address?.city,
           state: order?.shipping_address?.province,
-          country: order?.shipping_address?.country || "India",
+          country: order?.shipping_address?.country,
           phone: order?.shipping_address?.phone,
           order: order?.id,
           payment_mode:
@@ -301,7 +301,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           city: order.shipping_address?.city,
           state: order.shipping_address?.province,
           country: order.shipping_address?.country,
-          phone: order.shipping_address?.phone || "9999999999",
+          phone: order.shipping_address?.phone,
           order: order.id,
           payment_mode:
             order.payments[0]?.provider_id === "cod" ? "COD" : "Prepaid",
@@ -314,10 +314,10 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           products_desc: x?.item?.description,
           hsn_code: x?.item?.variant?.hs_code,
           ...(order.payments[0]?.provider_id === "cod" && {
-            cod_amount: returnOrder.refund_amount || "10",
+            cod_amount: returnOrder.refund_amount / 100,
           }),
           order_date: order.created_at,
-          total_amount: returnOrder.refund_amount,
+          total_amount: returnOrder.refund_amount / 100,
           seller_add: `${locationDetails?.address?.address_1} ${locationDetails?.address?.address_2}`,
           seller_name: locationDetails?.address?.company,
           seller_inv: "",
@@ -336,7 +336,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
           city: locationDetails?.address?.city,
           pin_code: locationDetails?.address?.postal_code,
           country: locationDetails?.address?.country_code,
-          phone: locationDetails?.address?.phone || "9999999999",
+          phone: locationDetails?.address?.phone,
         },
       };
       console.log({ shipmentData: JSON.stringify(shipmentData) });
