@@ -103,7 +103,7 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   // COMPLETED
   async validateOption(data: { [x: string]: unknown }): Promise<boolean> {
     console.log("DELHIVERY:::::::::::::::validateOption", data);
-    return ["delhivery-surface", "delhivery-express"].indexOf(data.id) >= 0;
+    return ["delhivery-surface", "delhivery-express"].indexOf(`${data.id}`) >= 0;
   }
   // COMPLETED
   async canCalculate(data: { [x: string]: unknown }): Promise<boolean> {
