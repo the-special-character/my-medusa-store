@@ -91,15 +91,15 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       throw new Error("invalid data");
     }
 
-    if (cart?.shipping_address?.postal_code) {
-      const res = await this.axiosInstance_.get(
-        `c/api/pin-codes/json/?filter_codes=${cart?.shipping_address?.postal_code}`
-      );
-      if (res.data?.delivery_codes?.length === 0) {
-        throw new Error("delhivery not possible on this pincode data");
-      }
-      console.log({ response: JSON.stringify(res.data) });
-    }
+    // if (cart?.shipping_address?.postal_code) {
+    //   const res = await this.axiosInstance_.get(
+    //     `c/api/pin-codes/json/?filter_codes=${cart?.shipping_address?.postal_code}`
+    //   );
+    //   if (res.data?.delivery_codes?.length === 0) {
+    //     throw new Error("delhivery not possible on this pincode data");
+    //   }
+    //   console.log({ response: JSON.stringify(res.data) });
+    // }
     return {
       ...optionData,
       ...data,
