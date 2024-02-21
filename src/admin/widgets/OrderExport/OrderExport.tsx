@@ -1,9 +1,29 @@
 import type { WidgetConfig } from "@medusajs/admin";
 
+// "Subtotal",
+// 	"Shipping Total",
+// 	"Discount Total",
+// 	"Gift Card Total",
+// 	"Refunded Total",
+// 	"Tax Total",
+// 	"Total",
+// 	"Currency Code",
+
 const csvHeader = [
 	"id",
+	"display_id",
 	"status",
 	"created_at",
+	"shipping_total",
+	"discount_total",
+	"tax_total",
+	"total",
+	"subtotal",
+	"paid_total",
+	"refundable_amount",
+	"currency_code",
+	"fulfillment_status",
+	"payment_status",
 	"customer_id",
 	"customer_first_name",
 	"customer_last_name",
@@ -14,35 +34,50 @@ const csvHeader = [
 	"city",
 	"country_code",
 	"postal_code",
-	"fulfillment_status",
-	"payment_status",
+	"items",
 ];
 
 function extractFields(data) {
+	const itemNames = data?.items?.map(({ name, quantity, unit_price }) =>
+		JSON.stringify({
+			name,
+			quantity,
+			unit_price: unit_price / 100,
+		})
+	);
 	const newdata = [
-		data.id || "",
-		data.status || "",
-		data.created_at || "",
-		data.customer_id || "",
-		data?.customer?.first_name || data?.shipping_address?.first_name || "",
-		data?.customer?.last_name || data?.shipping_address?.last_name || "",
-		data.email || data.customer.email || "",
-		data?.shipping_address?.phone || "",
-		data?.shipping_address?.address_1 || "",
-		data?.shipping_address?.address_2 || "",
-		data?.shipping_address?.city || "",
-		data?.shipping_address?.country_code || "",
-		data?.shipping_address?.postal_code || "",
-		data?.fulfillment_status || "",
-		data?.payment_status || "",
+		data?.id || "N/A",
+		data?.display_id || "N/A",
+		data?.status || "N/A",
+		data?.created_at || "N/A",
+		data?.shipping_total / 100 || 0,
+		data?.discount_total / 100 || 0,
+		data?.tax_total / 100 || 0,
+		data?.total / 100 || 0,
+		data?.subtotal / 100 || 0,
+		data?.paid_total / 100 || 0,
+		data?.refundable_amount / 100 || 0,
+		data?.currency_code || "N/A",
+		data?.fulfillment_status || "N/A",
+		data?.payment_status || "N/A",
+		data?.customer_id || "N/A",
+		data?.customer?.first_name || data?.shipping_address?.first_name || "N/A",
+		data?.customer?.last_name || data?.shipping_address?.last_name || "N/A",
+		data?.email || data?.customer?.email || "N/A",
+		data?.shipping_address?.phone || "N/A",
+		data?.shipping_address?.address_1 || "N/A",
+		data?.shipping_address?.address_2 || "N/A",
+		data?.shipping_address?.city || "N/A",
+		data?.shipping_address?.country_code || "N/A",
+		data?.shipping_address?.postal_code || "N/A",
+		itemNames.join("|") || "N/A",
 	];
 	for (let i = 0; i < newdata.length; i++) {
 		const data = newdata[i];
-		if (data) {
+		if (data && typeof data === "string") {
 			newdata[i] = data.replaceAll(",", " ");
 		}
 	}
-	console.log(newdata);
 
 	return newdata;
 }
@@ -56,7 +91,7 @@ function convertToCSV(header, dataArray) {
 const getAllCarts = async () => {
 	try {
 		const response = await fetch(
-			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?limit=`,
+			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?fields=id,display_id,status,created_at,shipping_total,discount_total,tax_total,refunded_total,total,subtotal,paid_total,refundable_amount,currency_code,customer_id,email,fulfillment_status,payment_status`,
 			{
 				credentials: "include",
 			}
