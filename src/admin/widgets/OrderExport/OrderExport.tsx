@@ -1,4 +1,5 @@
 import type { WidgetConfig } from "@medusajs/admin";
+import { useState } from "react";
 
 // "Subtotal",
 // 	"Shipping Total",
@@ -88,10 +89,17 @@ function convertToCSV(header, dataArray) {
 	return headerRow + dataRows;
 }
 
-const getAllCarts = async () => {
+const getAllCarts = async ({ startDate, endDate }) => {
+	let query = "";
+	if (startDate) {
+		query = `${query}&created_at[gte]=${startDate}`;
+	}
+	if (endDate) {
+		query = `${query}&created_at[lte]=${endDate}`;
+	}
 	try {
 		const response = await fetch(
-			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?fields=id,display_id,status,created_at,shipping_total,discount_total,tax_total,refunded_total,total,subtotal,paid_total,refundable_amount,currency_code,customer_id,email,fulfillment_status,payment_status`,
+			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?fields=id,display_id,status,created_at,shipping_total,discount_total,tax_total,refunded_total,total,subtotal,paid_total,refundable_amount,currency_code,customer_id,email,fulfillment_status,payment_status${query}`,
 			{
 				credentials: "include",
 			}
@@ -106,8 +114,11 @@ const getAllCarts = async () => {
 };
 
 const OrderExport = () => {
+	const [startDate, setStartDate] = useState<Date | null>(null);
+	const [endDate, setEndDate] = useState<Date | null>(null);
+
 	const handleDownload = async () => {
-		const { orders } = await getAllCarts();
+		const { orders } = await getAllCarts({ startDate, endDate });
 		const flattenedDataArray = orders.map((data) => extractFields(data));
 
 		const csvData = convertToCSV(csvHeader, flattenedDataArray);
@@ -119,11 +130,36 @@ const OrderExport = () => {
 		link.click();
 	};
 
+	const handleStartDateChange = (e) => {
+		setStartDate(e.target.value);
+	};
+
+	const handleEndDateChange = (e) => {
+		setEndDate(e.target.value);
+	};
+
 	return (
-		<div className="h-10">
+		<div className="flex gap-4 items-center">
+			<div className="flex gap-2 items-center">
+				<input
+					type="date"
+					name="startDate"
+					className="bg-white py-2 px-4 rounded-lg border font-bold"
+					placeholder="Start Date"
+					onChange={handleStartDateChange}
+				/>
+				<span>-</span>
+				<input
+					type="date"
+					name="endDate"
+					className="bg-white py-2 px-4 rounded-lg border font-bold"
+					placeholder="End Date"
+					onChange={handleEndDateChange}
+				/>
+			</div>
 			<button
 				type="button"
-				className="bg-white py-2 px-4 rounded-lg border mb-4 font-bold"
+				className="bg-white py-2 px-4 rounded-lg border font-bold"
 				onClick={handleDownload}
 			>
 				Export Orders
