@@ -1,15 +1,6 @@
 import type { WidgetConfig } from "@medusajs/admin";
 import { useState } from "react";
 
-// "Subtotal",
-// 	"Shipping Total",
-// 	"Discount Total",
-// 	"Gift Card Total",
-// 	"Refunded Total",
-// 	"Tax Total",
-// 	"Total",
-// 	"Currency Code",
-
 const csvHeader = [
 	"id",
 	"display_id",
@@ -99,7 +90,7 @@ const getAllCarts = async ({ startDate, endDate }) => {
 	}
 	try {
 		const response = await fetch(
-			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?fields=id,display_id,status,created_at,shipping_total,discount_total,tax_total,refunded_total,total,subtotal,paid_total,refundable_amount,currency_code,customer_id,email,fulfillment_status,payment_status${query}`,
+			`${process.env.MEDUSA_BACKEND_URL}/admin/orders?limit=&fields=id,display_id,status,created_at,shipping_total,discount_total,tax_total,refunded_total,total,subtotal,paid_total,refundable_amount,currency_code,customer_id,email,fulfillment_status,payment_status${query}`,
 			{
 				credentials: "include",
 			}
