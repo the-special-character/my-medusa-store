@@ -1,0 +1,22 @@
+.dialog {
+	@apply absolute top-0 left-0 w-full h-full overflow-hidden overflow-y-scroll shadow-2xl rounded-lg bg-white;
+}
+.section {
+	@apply py-4;
+}
+
+.section > h1 {
+	@apply font-sans font-medium h1-core;
+}
+
+.section > h2 {
+	@apply font-sans font-semibold h2-core mb-4;
+}
+
+.section .row {
+	@apply flex gap-2 items-center;
+}
+
+.row span:first-child {
+	@apply font-semibold;
+}

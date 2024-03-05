@@ -11,6 +11,7 @@ import {
 
 import ReviewTable from "./components/cart-table";
 import { Cart } from "@medusajs/medusa";
+import style from "./style.module.css";
 
 // type ReviewStatuss = ReviewStatus;
 type ReviewStatus = "pending" | "approved" | "declined";
@@ -63,6 +64,8 @@ type Props = {};
 
 const page = (props: Props) => {
 	const [carts, setCarts] = useState<Cart[]>([]);
+
+	const [modalOpen, setModalOpen] = useState({ open: false, params: {} });
 
 	const getAllProducts = useCallback(async () => {
 		try {
@@ -142,8 +145,14 @@ const page = (props: Props) => {
 							href={`/a/customers/${info.row.original.customer.id}`}
 							className="text-blue-50 font-bold flex gap-2"
 						>
-							<span>{info.row.original.customer.first_name || info.row.original.shipping_address.first_name}</span>
-							<span>{info.row.original.customer.last_name || info.row.original.shipping_address.last_name}</span>
+							<span>
+								{info.row.original.customer.first_name ||
+									info.row.original.shipping_address.first_name}
+							</span>
+							<span>
+								{info.row.original.customer.last_name ||
+									info.row.original.shipping_address.last_name}
+							</span>
 						</a>
 					)}
 				</>
@@ -152,7 +161,10 @@ const page = (props: Props) => {
 		columnHelper.accessor("shipping_address", {
 			header: "Phone Number",
 			cell: (info) => (
-				<a href={`tel:${info.row.original.shipping_address.phone}`} className="text-blue-50 font-bold flex gap-2">
+				<a
+					href={`tel:${info.row.original.shipping_address.phone}`}
+					className="text-blue-50 font-bold flex gap-2"
+				>
 					{info.row.original.shipping_address.phone}
 				</a>
 			),
@@ -208,19 +220,19 @@ const page = (props: Props) => {
 						<button
 							className="bg-blue-500 text-white p-2 rounded-lg whitespace-nowrap"
 							onClick={() => {
-								// setModalOpen({ open: true, params: info.row.original });
+								setModalOpen({ open: true, params: info.row.original });
 							}}
 						>
-							Action 1
+							See Details
 						</button>
-						<button
+						{/* <button
 							className="bg-red-500 text-white p-2 rounded-lg whitespace-nowrap"
 							onClick={() => {
 								// handleDelete(info?.row?.original?.id);
 							}}
 						>
 							Action 2
-						</button>
+						</button> */}
 					</div>
 				);
 			},
@@ -244,7 +256,8 @@ const page = (props: Props) => {
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 	});
-	// const { open, params } = modalOpen;
+
+	const { open, params } = modalOpen;
 
 	return (
 		<div className="relative">
@@ -255,13 +268,10 @@ const page = (props: Props) => {
 				table={table}
 				heading={"Cart List"}
 			/>
-			{/* <dialog
-				open={open}
-				className="absolute top-[40%] h-[40%] w-[40%] shadow-2xl rounded-lg bg-white"
-			>
-				<div>
-					<div className="top justify-between flex flex-1">
-						<p>Review details</p>
+			<dialog open={open} className={style.dialog}>
+				<div className="divide-y-2 px-4">
+					<div className={`${style.section} flex justify-between items-center`}>
+						<h1>Cart details</h1>
 						<button
 							className="bg-white shadow-sm p-2 rounded-lg"
 							onClick={() => {
@@ -271,22 +281,90 @@ const page = (props: Props) => {
 							<XMark color="red" />
 						</button>
 					</div>
-					<p>Title:- {params?.title}</p>
-					<p>Description:- {params?.content}</p>
-					<p>Rating:- {params?.rating}</p>
-					<p>Status:- {params?.status?.toUpperCase()}</p>
-					<p>
-						User:-{" "}
-						<a
-							href={`/a/customers/${params?.customer?.id}`}
-							className="text-blue-50 font-bold"
-						>
-							{params?.customer?.first_name}
-							{params?.customer?.last_name}
-						</a>
-					</p>
+					<div className={style.section}>
+						<h2 className="font-sans font-medium h2-core">Cart Info:</h2>
+						<p className={style.row}>
+							<span>id:</span>
+							<span>{params?.id}</span>
+						</p>
+						<p className={style.row}>
+							<span>Total Cart Item:</span>
+							<span>{params?.items?.length || 0}</span>
+						</p>
+					</div>
+					<div className={style.section}>
+						<h2>Customer Info</h2>
+						<p className={style.row}>
+							<span>id:</span>
+							<a
+								href={`/a/customers/${params?.customer?.id}`}
+								className="text-blue-50 font-bold flex gap-2"
+							>
+								{params?.customer?.id}
+							</a>
+						</p>
+						<p className={style.row}>
+							<span>Name:</span>
+							<span>
+								<a
+									href={`/a/customers/${params?.customer?.id}`}
+									className="text-blue-50 font-bold flex gap-2"
+								>
+									<span>
+										{params?.customer?.first_name ||
+											params?.shipping_address?.first_name}
+									</span>
+									<span>
+										{params?.customer?.last_name ||
+											params?.shipping_address?.last_name}
+									</span>
+								</a>
+							</span>
+						</p>
+						<p className={style.row}>
+							<span>Email:</span>
+							<span>{params?.email}</span>
+						</p>
+						<p className={style.row}>
+							<span>Phone Number:</span>
+							<span>{params?.shipping_address?.phone}</span>
+						</p>
+					</div>
+					<div className={style.section}>
+						<h2>Cart Items</h2>
+						<div className="space-y-4">
+							{params?.items?.length &&
+								params.items?.map((item) => {
+									return (
+										<div key={item.id} className={style.row}>
+											<div className="w-[50px]">
+												{/* image */}
+												<img
+													className="w-full aspect-square object-cover"
+													src={item?.thumbnail}
+													alt=""
+												/>
+											</div>
+											<div className="flex-1">
+												{/* name */}
+												<span>{item?.title}</span>
+											</div>
+											<div className={style.row}>
+												{/* price */}
+												<span>Rs: {(item?.unit_price / 100).toFixed(2)}</span>
+												<span>x{item?.quantity}</span>
+												<span>
+													Rs:{" "}
+													{(item?.unit_price / 100).toFixed(2) * item?.quantity}
+												</span>
+											</div>
+										</div>
+									);
+								})}
+						</div>
+					</div>
 				</div>
-			</dialog> */}
+			</dialog>
 		</div>
 	);
 };
