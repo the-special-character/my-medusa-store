@@ -17,7 +17,7 @@ import axios, { AxiosInstance } from "axios";
 type fulfillmentPackageType = {
   status: string;
   waybill: string;
-}
+};
 
 class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   static identifier = "delhivery";
@@ -108,14 +108,16 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
   // COMPLETED
   async validateOption(data: { [x: string]: unknown }): Promise<boolean> {
     console.log("DELHIVERY:::::::::::::::validateOption", data);
-    return ["delhivery-surface", "delhivery-express"].indexOf(`${data.id}`) >= 0;
+    return (
+      ["delhivery-surface", "delhivery-express"].indexOf(`${data.id}`) >= 0
+    );
   }
   // COMPLETED
   async canCalculate(data: { [x: string]: unknown }): Promise<boolean> {
     console.log("DELHIVERY:::::::::::::::canCalculate", data);
     return data.id == "delhivery-surface" || data.id == "delhivery-express";
   }
-  
+
   // COMPLETED
   async calculatePrice(
     optionData: { [x: string]: unknown },
@@ -170,42 +172,51 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       order.payments[0].provider_id;
 
       const shipmentData = {
-        shipments: items.map((x) => ({
-          name: `${order?.shipping_address?.first_name} ${order?.shipping_address?.last_name}`,
-          add:
-            `${order?.shipping_address?.address_1} ${order?.shipping_address?.address_2}` ||
-            "8 ganeshkunj",
-          pin: order?.shipping_address?.postal_code,
-          city: order?.shipping_address?.city,
-          state: order?.shipping_address?.province,
-          country: order?.shipping_address?.country,
-          phone: order?.shipping_address?.phone,
-          order: order?.id,
-          payment_mode:
-            order.payments[0].provider_id === "cod" ? "COD" : "Prepaid",
-          return_pin: locationDetails.address.postal_code,
-          return_city: locationDetails.address.city,
-          return_phone: locationDetails.address.phone,
-          return_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
-          return_state: locationDetails.address.province,
-          return_country: locationDetails.address.country_code,
-          products_desc: x.description,
-          hsn_code: x.variant.hs_code,
-          cod_amount: order.total / 100,
-          order_date: order.created_at,
-          total_amount: order.total / 100,
-          seller_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
-          seller_name: locationDetails.address.company,
-          seller_inv: "",
-          quantity: x.quantity,
-          waybill: "",
-          shipment_width: x.variant.width,
-          shipment_height: x.variant.height,
-          weight: x.variant.weight,
-          seller_gst_tin: "",
-          shipping_mode: data?.id === "delhivery-express" ?  "Express" : "Surface" ,
-          address_type: "home",
-        })),
+        shipments: [
+          {
+            name: `${order?.shipping_address?.first_name} ${order?.shipping_address?.last_name}`,
+            add:
+              `${order?.shipping_address?.address_1} ${order?.shipping_address?.address_2}` ||
+              "8 ganeshkunj",
+            pin: order?.shipping_address?.postal_code,
+            city: order?.shipping_address?.city,
+            state: order?.shipping_address?.province,
+            country: order?.shipping_address?.country,
+            phone: order?.shipping_address?.phone,
+            order: order?.id,
+            payment_mode:
+              order.payments[0].provider_id === "cod" ? "COD" : "Prepaid",
+            return_pin: locationDetails.address.postal_code,
+            return_city: locationDetails.address.city,
+            return_phone: locationDetails.address.phone,
+            return_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
+            return_state: locationDetails.address.province,
+            return_country: locationDetails.address.country_code,
+            cod_amount: order.total / 100,
+            order_date: order.created_at,
+            total_amount: order.total / 100,
+            seller_add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
+            seller_name: locationDetails.address.company,
+            seller_inv: "",
+            waybill: "",
+            seller_gst_tin: "",
+            shipping_mode:
+              data?.id === "delhivery-express" ? "Express" : "Surface",
+            address_type: "home",
+            products_desc: items
+              .map((x) => x.variant.sku)
+              .filter((x) => x)
+              .join(","),
+            quantity: items.reduce((p, c) =>  p + (c.quantity || 0), 0),
+            hsn_code: items
+            .map((x) => x.variant.hs_code)
+            .filter((x) => x)
+            .join(","),
+            shipment_width: items.reduce((p, c) =>  p + (c.variant.width || 0), 0),
+            shipment_height: items.reduce((p, c) =>  p + (c.variant.height || 0), 0) ,
+            weight: items.reduce((p, c) =>  p + (c.variant.weight || 0), 0),
+          },
+        ],
         pickup_location: {
           name: locationDetails.name,
           add: `${locationDetails.address.address_1} ${locationDetails.address.address_2}`,
@@ -258,13 +269,17 @@ class DelhiveryFulfillmentService extends AbstractFulfillmentService {
       cancelFulfillment: fulfillment,
     });
 
-    const res = await Promise.all((fulfillment?.packages as fulfillmentPackageType[])?.map(x => this.axiosInstance_.post(`/api/p/edit`, {
-      waybill: x.waybill,
-      cancellation: true,
-    })) || [])
+    const res = await Promise.all(
+      (fulfillment?.packages as fulfillmentPackageType[])?.map((x) =>
+        this.axiosInstance_.post(`/api/p/edit`, {
+          waybill: x.waybill,
+          cancellation: true,
+        })
+      ) || []
+    );
 
     console.log("DELHIVERY:::::::::::::::cancelFulfillment", {
-      data: JSON.stringify(res.map(x => x.data)),
+      data: JSON.stringify(res.map((x) => x.data)),
     });
     return {};
   }
