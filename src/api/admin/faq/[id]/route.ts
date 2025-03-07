@@ -6,7 +6,9 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const faqService: FaqService = req.scope.resolve("faqService");
   const id = req.params.id;
 
-  const faq = await faqService.retrieve(id);
+  const faq = await faqService.retrieve(id, {
+    relations: ["faqCategories"],
+  });
 
   res.status(200).json({ faq });
 }

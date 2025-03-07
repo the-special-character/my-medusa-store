@@ -39,8 +39,7 @@ class FaqService extends TransactionBaseService {
           this.faqRepository_
         );
 
-        const query = buildQuery(selector, config);
-
+        const query = buildQuery(selector || {}, config || {});
         return await faqRepository.findAndCount(query);
       }
     );
@@ -75,19 +74,24 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        let faqCategory: null | FaqCategory = null;
+        let faqCategories: FaqCategory[] = [];
         if (payload?.category_id) {
-          faqCategory =
-            (await faqCategoryRepository.findOne(
-              buildQuery({
-                id: payload?.category_id,
-              })
-            )) || null;
+          const category = await faqCategoryRepository.findOne(
+            buildQuery({
+              id: payload?.category_id,
+            })
+          );
+          if (!category) {
+            throw new Error(
+              `FAQ Category with id ${payload.category_id} not found`
+            );
+          }
+          faqCategories = [category];
         }
 
         const createdWishlist = faqRepository.create({
           ...payload,
-          faqCategory,
+          faqCategories,
         });
 
         const { id } = await faqRepository.save(createdWishlist);
@@ -97,7 +101,7 @@ class FaqService extends TransactionBaseService {
             id,
           },
           {
-            relations: ["faqCategory"],
+            relations: ["faqCategories"],
           }
         );
 
@@ -119,31 +123,34 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        const faq = await this.retrieve(id);
+        const { category_id, ...faqData } = data;
+        console.log({ data, category_id, faqData });
 
-        Object.assign(faq, data);
-
-        let faqCategory: null | FaqCategory = null;
-        if (data?.category_id) {
-          faqCategory =
+        let faqCategories: FaqCategory[] = [];
+        if (category_id) {
+          const category =
             (await faqCategoryRepository.findOne(
               buildQuery({
-                id: data?.category_id,
+                id: category_id,
               })
             )) || null;
+
+          if (!category) {
+            throw new Error(`FAQ Category with id ${category_id} not found`);
+          }
+          faqCategories = [category];
         }
 
-        await faqRepository.update(id, { ...faq, faqCategory });
+        await faqRepository.update(id, { ...faqData, faqCategories });
 
         const faqQuery = buildQuery(
           {
             id,
           },
           {
-            relations: ["faqCategory"],
+            relations: ["faqCategories"],
           }
         );
-
         return await faqRepository.findOne(faqQuery);
       }
     );
@@ -182,7 +189,7 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        const query = buildQuery(selector, config);
+        const query = buildQuery(selector || {}, config || {});
 
         return await faqCategoryRepository.findAndCount(query);
       }
@@ -212,6 +219,11 @@ class FaqService extends TransactionBaseService {
   }
 
   async createCategeory(payload: FaqCategory): Promise<FaqCategory> {
+    if (!payload.handle && payload.title) {
+      payload.handle = payload.title.toLowerCase().trim().replace(/\s+/g, "-"); // Replace spaces with hyphens
+      // .replace(/[^a-z0-9-]/g, ""); // Remove special characters except hyphens
+    }
+
     return await this.atomicPhase_(
       async (transactionManager: EntityManager) => {
         const faqCategoryRepository = transactionManager.withRepository(
@@ -245,11 +257,7 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        const faqCategory = await this.retrieve(id);
-
-        Object.assign(faqCategory, data);
-
-        await faqCategoryRepository.update(id, faqCategory);
+        await faqCategoryRepository.update(id, data);
 
         const faqQuery = buildQuery(
           {
@@ -272,7 +280,7 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        const faqCategory = await this.retrieve(id);
+        const faqCategory = await this.retrieveCategeory(id);
 
         if (!faqCategory) {
           throw new MedusaError(

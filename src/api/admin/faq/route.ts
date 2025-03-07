@@ -5,7 +5,12 @@ import { EntityManager } from "typeorm";
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const faqService: FaqService = req.scope.resolve("faqService");
 
-  const faqs = await faqService.list();
+  const faqs = await faqService.list(
+    {},
+    {
+      relations: ["faqCategories"],
+    }
+  );
 
   res.status(200).json({ faqs });
 }

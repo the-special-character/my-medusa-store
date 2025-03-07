@@ -8,7 +8,8 @@ import {
   useReactTable,
   Table as TableType,
 } from "@tanstack/react-table";
-import { Table, Container, Heading } from "@medusajs/ui";
+import { Table, Container, Heading, Button } from "@medusajs/ui";
+import { Plus } from "@medusajs/icons";
 import { ProductReview } from "src/models/product-review";
 import CustomTable from "../../../components/CustomTable";
 
@@ -26,13 +27,26 @@ interface Props {
   columns: Column[];
   heading: string;
   table: TableType<ProductReview>;
+  onCreate?: () => void;
 }
 
-const ReviewTable = ({ data, PAGE_SIZE, columns, heading, table }: Props) => {
+const ReviewTable = ({
+  data,
+  PAGE_SIZE,
+  columns,
+  heading,
+  table,
+  onCreate,
+}: Props) => {
   return (
     <Container className="overflow-hidden p-0">
       <div className="flex items-center justify-between px-8 pt-6 pb-4">
-        <Heading>{heading}</Heading>
+        <Heading className="capitalize">{heading}</Heading>
+        {onCreate && (
+          <Button onClick={onCreate}>
+            Create <Plus />
+          </Button>
+        )}
       </div>
       <CustomTable
         PAGE_SIZE={PAGE_SIZE}

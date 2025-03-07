@@ -5,7 +5,12 @@ import { EntityManager } from "typeorm";
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const faqService: FaqService = req.scope.resolve("faqService");
 
-  const faqs = await faqService.listCategory();
+  const faqs = await faqService.listCategory(
+    {},
+    {
+      relations: ["faqs"],
+    }
+  );
 
   res.status(200).json({ faqs });
 }
@@ -15,6 +20,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
   const manager: EntityManager = req.scope.resolve("manager");
 
   const faq = await manager.transaction(async (transactionManager) => {
+    console.log("log in route");
+
     return await faqService
       .withTransaction(transactionManager)
       .createCategeory(req.body);
