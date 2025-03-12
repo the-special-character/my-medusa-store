@@ -2,7 +2,13 @@ import { EllipsisHorizontal, PencilSquare, Trash } from "@medusajs/icons";
 import { Button, DropdownMenu } from "@medusajs/ui";
 import { Link, useNavigate } from "react-router-dom";
 
-const FaqCategoryActions = ({ faqId }: { faqId: string }) => {
+const FaqCategoryActions = ({
+  faqId,
+  onEdit,
+}: {
+  faqId: string;
+  onEdit: () => void;
+}) => {
   const navigate = useNavigate();
   const handleDelete = async () => {
     try {
@@ -41,11 +47,9 @@ const FaqCategoryActions = ({ faqId }: { faqId: string }) => {
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item asChild>
-          <Link to={`/a/faqs/faq-category/${faqId}`} className="gap-x-2">
-            <PencilSquare className="text-ui-fg-subtle" />
-            Edit
-          </Link>
+        <DropdownMenu.Item onClick={() => onEdit()} className="gap-x-2">
+          <PencilSquare className="text-ui-fg-subtle" />
+          Edit
         </DropdownMenu.Item>
 
         <DropdownMenu.Item onClick={handleDelete} className="gap-x-2">

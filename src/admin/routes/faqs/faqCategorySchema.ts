@@ -1,4 +1,4 @@
-export const faqSchema = async () => {
+export const faqCategorySchema = async () => {
   const res = await fetch(
     `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`,
     {
@@ -8,8 +8,8 @@ export const faqSchema = async () => {
   const categoriesSchema = await res.json();
 
   const schema = {
-    faqTitle: {
-      label: "Faq Title",
+    faqCategoryTitle: {
+      label: "Faq Category Title",
       fieldType: "input",
       validation: {
         required: {
@@ -22,24 +22,24 @@ export const faqSchema = async () => {
         },
       },
     },
-    faqContent: {
-      label: "Faq Content",
-      fieldType: "markdown-editor",
+    faqCategoryContent: {
+      label: "Faq Category Content",
+      fieldType: "textarea",
+      validation: {},
+    },
+    faqCategoryHandle: {
+      label: "Faq Category Handle",
+      fieldType: "input",
       validation: {
-        required: {
-          value: true,
-          message: "Content is required",
+        // required: {
+        //   value: true,
+        //   message: "Handle is required",
+        // },
+        pattern: {
+          value: /^(?!^\d+$)^.+$/,
+          message: "Title should not contain only numbers",
         },
       },
-    },
-    faqCategories: {
-      label: "Faq Categories",
-      fieldType: "nested-select",
-      props: {
-        options: categoriesSchema.faqs[0],
-        placeholder: "Select an Category...",
-      },
-      validation: {},
     },
   };
 

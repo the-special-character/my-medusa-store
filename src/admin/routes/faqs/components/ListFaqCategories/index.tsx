@@ -8,6 +8,8 @@ import {
 } from "@tanstack/react-table";
 import { FaqType } from "../ListFaqs";
 import FaqCategoryActions from "../FaqCategoryActions";
+import { FocusModal } from "@medusajs/ui";
+import EditCategoryForm from "../EditCategoryForm";
 
 export type FaqCategoryType = {
   handle: string;
@@ -22,7 +24,30 @@ export type FaqCategoryType = {
 
 const ListFaqCategories = () => {
   const [faqCategories, setFaqCategories] = useState([]);
+  const [openModal, setOpenModal] = useState({
+    value: false,
+    data: null,
+  });
 
+  const closeModal = () => {
+    setOpenModal({
+      value: false,
+      data: null,
+    });
+  };
+
+  const openCreateModal = () => {
+    setOpenModal({
+      value: true,
+      data: null,
+    });
+  };
+  const openUpdateModal = (data: Partial<FaqType>) => {
+    setOpenModal({
+      value: true,
+      data: data,
+    });
+  };
   useEffect(() => {
     const fetchFaqCategories = async () => {
       try {
@@ -47,6 +72,11 @@ const ListFaqCategories = () => {
   const catColumnHelper = createColumnHelper<FaqCategoryType>();
 
   const faqCategoryColumns = [
+    catColumnHelper.display({
+      header: "Sr. No.",
+      id: "sr_no",
+      cell: (info) => info.row.index + 1,
+    }),
     catColumnHelper.accessor("created_at", {
       header: "Date",
       cell: (info) => (
@@ -76,9 +106,12 @@ const ListFaqCategories = () => {
       header: "Actions",
       cell: (info) => {
         const faqCategoryId = info.row.original.id;
-        console.log({ faqCategoryId });
-
-        return <FaqCategoryActions faqId={faqCategoryId} />;
+        return (
+          <FaqCategoryActions
+            faqId={faqCategoryId}
+            onEdit={() => openUpdateModal(info.row.original)}
+          />
+        );
       },
     }),
   ];
@@ -93,12 +126,39 @@ const ListFaqCategories = () => {
   const PAGE_SIZE = 10;
 
   return (
-    <ReviewTable
-      PAGE_SIZE={PAGE_SIZE}
-      data={faqCategories}
-      columns={faqCategoryColumns}
-      table={faqCategoryTable}
-    />
+    <>
+      <ReviewTable
+        heading="Faq Category"
+        onCreate={() => {
+          setOpenModal({
+            value: true,
+            data: null,
+          });
+        }}
+        PAGE_SIZE={PAGE_SIZE}
+        data={faqCategories}
+        columns={faqCategoryColumns}
+        table={faqCategoryTable}
+      />
+      <FocusModal
+        modal
+        open={openModal.value}
+        onOpenChange={(value) =>
+          value ? setOpenModal({ value: true, data: null }) : closeModal()
+        }
+      >
+        <FocusModal.Content>
+          <FocusModal.Header></FocusModal.Header>
+          <FocusModal.Body>
+            <EditCategoryForm
+              mode={openModal.data ? "edit" : "create"}
+              categoryData={openModal.data}
+              closeModal={closeModal}
+            />
+          </FocusModal.Body>
+        </FocusModal.Content>
+      </FocusModal>
+    </>
   );
 };
 

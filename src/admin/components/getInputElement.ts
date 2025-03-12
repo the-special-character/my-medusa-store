@@ -1,5 +1,6 @@
 import { Input, Textarea, Checkbox } from "@medusajs/ui";
 import NestedMultiSelect from "./CustomNestedMultiSelect";
+import CustomMarkdownEdit from "./CustomMarkdownEdit";
 // import CustomMarkdownEdit from "./CustomMarkdownEdit"
 // import CustomToggleButton from "./CustomToggleButton"
 // import CustomSelect from "./CustomSelect"
@@ -22,7 +23,8 @@ const getInputElement = (type: string): InputElementType => {
       return Checkbox;
     case "nested-select":
       return NestedMultiSelect;
-
+    case "markdown-editor":
+      return CustomMarkdownEdit;
     // case "markdown-editor":
     //   return CustomMarkdownEdit
     // case "richText-editor":

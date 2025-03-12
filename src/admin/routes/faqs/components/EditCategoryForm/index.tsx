@@ -1,20 +1,23 @@
 import { FieldValues, useForm } from "react-hook-form";
 import DynamicForm, { SchemaField } from "../../../../components/DynamicForm";
-import { FaqType } from "../ListFaqs";
 import { useEffect, useState } from "react";
-import { faqSchema } from "../../faqSchema";
 import { Button, Toaster } from "@medusajs/ui";
 import { useNavigate } from "react-router-dom";
+import { faqCategorySchema } from "../../faqCategorySchema";
+import { FaqCategoryType } from "../ListFaqCategories";
 
-const EditForm = ({
+const EditCategoryForm = ({
   mode,
-  data,
+  categoryData,
   closeModal,
 }: {
   mode: "edit" | "create";
-  data: Partial<FaqType> | null;
+  categoryData: Partial<FaqCategoryType> | null;
   closeModal: () => void;
 }) => {
+  console.log({ categoryData });
+  console.log({ mode });
+
   const [schema, setSchema] = useState<Record<string, SchemaField>>({});
 
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ const EditForm = ({
   useEffect(() => {
     const loadSchema = async () => {
       try {
-        const schemaData = await faqSchema();
+        const schemaData = await faqCategorySchema();
 
         setSchema(schemaData);
       } catch (error) {
@@ -36,15 +39,21 @@ const EditForm = ({
     console.log("faq data on submit", data);
 
     const raw = {
-      title: data.faqTitle,
-      description: data.faqContent,
-      category_id: data.faqCategories,
+      title: data.faqCategoryTitle,
+      description: data.faqCategoryContent,
+      handle: data.faqCategoryHandle,
     };
-    console.log({ raw });
 
     try {
-      const res = await fetch(`${process.env.MEDUSA_BACKEND_URL}/admin/faq`, {
-        method: "POST",
+      const url =
+        mode === "edit" && categoryData?.id
+          ? `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category/${categoryData.id}`
+          : `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`;
+
+      const method = mode === "edit" ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -54,7 +63,16 @@ const EditForm = ({
 
       if (!res.ok) {
         const errorResponse = await res.json();
-        console.error("Failed to create FAQ:", errorResponse);
+        console.error(
+          `Failed to ${mode === "edit" ? "edit" : "create"} FAQ:`,
+          errorResponse.message
+        );
+        if (errorResponse) {
+          form.setError("faqCategoryHandle", {
+            type: "server",
+            message: errorResponse.message as string, // Ensure it's a string message
+          });
+        }
         return;
       }
 
@@ -68,25 +86,22 @@ const EditForm = ({
 
   const form = useForm<FieldValues>({
     defaultValues:
-      mode == "edit" && data
+      mode == "edit" && categoryData
         ? {
-            faqTitle: data?.title,
-            faqContent: data?.description,
-            faqCategories:
-              data?.faqCategories?.map((x: { id: string }) => x.id) || [],
-            // faqCategory:
-            //   data?.faqCategory?.map((x: { id: string }) => x.id) || [],
+            faqCategoryTitle: categoryData?.title,
+            faqCategoryContent: categoryData?.description,
+            faqCategoryHandle: categoryData?.handle,
           }
         : {
-            faqTitle: "",
-            faqContent: "",
-            faqCategories: [],
+            faqCategoryTitle: "",
+            faqCategoryContent: "",
+            faqCategoryHandle: "",
           },
   });
 
   return (
     <div className="w-full p-5">
-      {/* <pre>{JSON.stringify(data)}</pre> */}
+      {/* <pre>{JSON.stringify(categoryData)}</pre> */}
       <DynamicForm
         isPending={form.formState.isSubmitting}
         form={form}
@@ -97,4 +112,4 @@ const EditForm = ({
   );
 };
 
-export default EditForm;
+export default EditCategoryForm;

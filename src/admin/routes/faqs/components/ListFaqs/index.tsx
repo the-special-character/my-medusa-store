@@ -74,6 +74,11 @@ const ListFaqs = () => {
   const columnHelper = createColumnHelper<FaqType>();
 
   const faqColumns = [
+    columnHelper.display({
+      header: "Sr. No.",
+      id: "sr_no",
+      cell: (info) => info.row.index + 1,
+    }),
     columnHelper.accessor("created_at", {
       header: "Date",
       cell: (info) => (
@@ -90,22 +95,22 @@ const ListFaqs = () => {
         </span>
       ),
     }),
-    columnHelper.accessor("description", {
-      header: "Description",
+    columnHelper.accessor("updated_at", {
+      header: "Last Updated",
       cell: (info) => (
         <span className="overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1 text-wrap">
-          {info.row.original?.description || "-"}
+          {info.row.original?.updated_at || "-"}
         </span>
       ),
     }),
-    columnHelper.accessor("faqCategories", {
-      header: "Faq Category",
-      cell: (info) => (
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1 text-wrap">
-          {/* {info.row.original?.faqCategory?.title || "-"} */}-
-        </span>
-      ),
-    }),
+    // columnHelper.accessor("faqCategories", {
+    //   header: "Faq Category",
+    //   cell: (info) => (
+    //     <span className="overflow-hidden text-ellipsis whitespace-nowrap line-clamp-1 text-wrap">
+    //       {/* {info.row.original?.faqCategory?.title || "-"} */}-
+    //     </span>
+    //   ),
+    // }),
     columnHelper.display({
       id: "actions",
       header: "Actions",
@@ -153,7 +158,7 @@ const ListFaqs = () => {
         }
       >
         <FocusModal.Content>
-          <FocusModal.Header>Title</FocusModal.Header>
+          <FocusModal.Header></FocusModal.Header>
           <FocusModal.Body>
             <EditForm
               mode={openModal.data ? "edit" : "create"}
