@@ -7,7 +7,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const id = req.params.id;
 
   const faq = await faqService.retrieve(id, {
-    relations: ["faqCategories"],
+    relations: ["faqCategory"],
   });
 
   res.status(200).json({ faq });

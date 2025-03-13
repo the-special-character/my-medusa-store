@@ -52,8 +52,8 @@ const ReviewTable = ({
         PAGE_SIZE={PAGE_SIZE}
         data={data}
         table={table}
-        columns={columns}
         heading={heading}
+        columns={columns}
       />
     </Container>
   );

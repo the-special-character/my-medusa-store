@@ -8,11 +8,11 @@ import { useNavigate } from "react-router-dom";
 
 const EditForm = ({
   mode,
-  data,
+  faqData,
   closeModal,
 }: {
   mode: "edit" | "create";
-  data: Partial<FaqType> | null;
+  faqData: Partial<FaqType> | null;
   closeModal: () => void;
 }) => {
   const [schema, setSchema] = useState<Record<string, SchemaField>>({});
@@ -38,13 +38,20 @@ const EditForm = ({
     const raw = {
       title: data.faqTitle,
       description: data.faqContent,
-      category_id: data.faqCategories,
+      category_id: data.faqCategory,
     };
     console.log({ raw });
 
     try {
-      const res = await fetch(`${process.env.MEDUSA_BACKEND_URL}/admin/faq`, {
-        method: "POST",
+      const url =
+        mode === "edit" && faqData?.id
+          ? `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/${faqData.id}`
+          : `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq`;
+
+      const method = mode === "edit" ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -54,7 +61,10 @@ const EditForm = ({
 
       if (!res.ok) {
         const errorResponse = await res.json();
-        console.error("Failed to create FAQ:", errorResponse);
+        console.error(
+          `Failed to ${mode === "edit" ? "edit" : "create"} FAQ:`,
+          errorResponse
+        );
         return;
       }
 
@@ -68,19 +78,18 @@ const EditForm = ({
 
   const form = useForm<FieldValues>({
     defaultValues:
-      mode == "edit" && data
+      mode == "edit" && faqData
         ? {
-            faqTitle: data?.title,
-            faqContent: data?.description,
-            faqCategories:
-              data?.faqCategories?.map((x: { id: string }) => x.id) || [],
+            faqTitle: faqData?.title,
+            faqContent: faqData?.description,
+            faqCategory: faqData?.faqCategory?.id,
             // faqCategory:
-            //   data?.faqCategory?.map((x: { id: string }) => x.id) || [],
+            //   data?.faqCategories?.map((x: { id: string }) => x.id) || [],
           }
         : {
             faqTitle: "",
             faqContent: "",
-            faqCategories: [],
+            faqCategory: "",
           },
   });
 

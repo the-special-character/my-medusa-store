@@ -8,7 +8,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const faqs = await faqService.list(
     {},
     {
-      relations: ["faqCategories"],
+      relations: ["faqCategory"],
     }
   );
 

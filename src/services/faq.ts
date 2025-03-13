@@ -74,14 +74,14 @@ class FaqService extends TransactionBaseService {
           this.faqCategoryRepository_
         );
 
-        let faqCategories: FaqCategory[] = [];
+        let faqCategory: FaqCategory;
 
         console.log({ payloadcategory: payload.category_id });
 
         if (payload?.category_id) {
           const category = await faqCategoryRepository.findOne(
             buildQuery({
-              id: payload?.category_id[0],
+              id: payload?.category_id,
             })
           );
           if (!category) {
@@ -91,13 +91,13 @@ class FaqService extends TransactionBaseService {
           }
           console.log({ category });
 
-          faqCategories = [category];
+          faqCategory = category;
         }
-        console.log({ payload, faqCategories });
+        console.log({ payload, faqCategory });
 
         const createdWishlist = faqRepository.create({
           ...payload,
-          faqCategories,
+          faqCategory,
         });
 
         const { id } = await faqRepository.save(createdWishlist);
@@ -107,7 +107,7 @@ class FaqService extends TransactionBaseService {
             id,
           },
           {
-            relations: ["faqCategories"],
+            relations: ["faqCategory"],
           }
         );
 
@@ -131,13 +131,13 @@ class FaqService extends TransactionBaseService {
 
         const { category_id, ...faqData } = data;
 
-        let faqCategories: FaqCategory[] = [];
+        let faqCategory: FaqCategory;
         console.log({ category_id });
 
         if (category_id) {
           const category = await faqCategoryRepository.findOne(
             buildQuery({
-              id: category_id[0],
+              id: category_id,
             })
           );
 
@@ -146,19 +146,19 @@ class FaqService extends TransactionBaseService {
           }
           console.log({ category });
 
-          faqCategories = [category];
-          console.log("faqCAtegories inside condition", faqCategories);
+          faqCategory = category;
+          console.log("faqCategory inside condition", faqCategory);
         }
-        console.log({ faqData, faqCategories });
+        console.log({ faqData, faqCategory });
 
-        await faqRepository.update(id, { ...faqData, faqCategories });
+        await faqRepository.update(id, { ...faqData, faqCategory });
 
         const faqQuery = buildQuery(
           {
             id,
           },
           {
-            relations: ["faqCategories"],
+            relations: ["faqCategory"],
           }
         );
         return await faqRepository.findOne(faqQuery);

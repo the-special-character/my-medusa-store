@@ -15,7 +15,7 @@ export type FaqType = {
   id: string;
   title: string;
   description: string;
-  faqCategories: FaqCategoryType[];
+  faqCategory: FaqCategoryType;
   created_at: string;
   updated_at: string;
   metadata: Record<string, any>;
@@ -52,7 +52,7 @@ const ListFaqs = () => {
     const getAllProducts = async () => {
       try {
         const response = await fetch(
-          `${process.env.MEDUSA_BACKEND_URL}/admin/faq`,
+          `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq`,
           {
             credentials: "include",
           }
@@ -162,7 +162,7 @@ const ListFaqs = () => {
           <FocusModal.Body>
             <EditForm
               mode={openModal.data ? "edit" : "create"}
-              data={openModal.data}
+              faqData={openModal.data}
               closeModal={closeModal}
             />
           </FocusModal.Body>

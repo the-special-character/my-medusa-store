@@ -52,7 +52,7 @@ const ListFaqCategories = () => {
     const fetchFaqCategories = async () => {
       try {
         const response = await fetch(
-          `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`,
+          `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/faq-category`,
           {
             credentials: "include",
           }

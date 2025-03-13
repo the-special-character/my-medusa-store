@@ -15,9 +15,6 @@ const EditCategoryForm = ({
   categoryData: Partial<FaqCategoryType> | null;
   closeModal: () => void;
 }) => {
-  console.log({ categoryData });
-  console.log({ mode });
-
   const [schema, setSchema] = useState<Record<string, SchemaField>>({});
 
   const navigate = useNavigate();
@@ -47,8 +44,8 @@ const EditCategoryForm = ({
     try {
       const url =
         mode === "edit" && categoryData?.id
-          ? `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category/${categoryData.id}`
-          : `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`;
+          ? `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/faq-category/${categoryData.id}`
+          : `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/faq-category`;
 
       const method = mode === "edit" ? "PUT" : "POST";
 
@@ -64,7 +61,7 @@ const EditCategoryForm = ({
       if (!res.ok) {
         const errorResponse = await res.json();
         console.error(
-          `Failed to ${mode === "edit" ? "edit" : "create"} FAQ:`,
+          `Failed to ${mode === "edit" ? "edit" : "create"} FAQ Category:`,
           errorResponse.message
         );
         if (errorResponse) {

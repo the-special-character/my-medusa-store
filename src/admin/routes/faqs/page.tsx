@@ -25,7 +25,6 @@ const page = () => {
         </Tabs.List>
         <Tabs.Content value="faqs">
           <ListFaqs />
-          {/* <FaqListTable /> */}
         </Tabs.Content>
         <Tabs.Content value="faq_categories">
           <ListFaqCategories />

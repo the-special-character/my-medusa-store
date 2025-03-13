@@ -5,10 +5,19 @@ type Props = {
   data: any[];
   PAGE_SIZE: number;
   table: TableType<any>;
+  heading?: string;
 };
 
-const CustomTable = ({ PAGE_SIZE, table, data }: Props) => {
+const CustomTable = ({ PAGE_SIZE, table, data, heading }: Props) => {
   const TABLE_HEIGHT = (PAGE_SIZE + 1) * 48;
+  if (data.length <= 0) {
+    return (
+      <div className="w-full flex justify-center h-10 text-lg font-semibold">
+        No {heading}.
+      </div>
+    );
+  }
+
   return (
     <>
       <div

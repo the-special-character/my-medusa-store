@@ -1,6 +1,7 @@
 import { Input, Textarea, Checkbox } from "@medusajs/ui";
 import NestedMultiSelect from "./CustomNestedMultiSelect";
 import CustomMarkdownEdit from "./CustomMarkdownEdit";
+import CustomCombobox from "./CustomCombobox";
 // import CustomMarkdownEdit from "./CustomMarkdownEdit"
 // import CustomToggleButton from "./CustomToggleButton"
 // import CustomSelect from "./CustomSelect"
@@ -25,28 +26,8 @@ const getInputElement = (type: string): InputElementType => {
       return NestedMultiSelect;
     case "markdown-editor":
       return CustomMarkdownEdit;
-    // case "markdown-editor":
-    //   return CustomMarkdownEdit
-    // case "richText-editor":
-    //   return CustomRichTextInput
-    // case "combobox":
-    // return CustomCombobox
-    // case "searchable-select":
-    //   return CustomSearchableSelect
-    // case "metadata":
-    //   return CustomMetaData
-    // case "toggle":
-    //   return CustomToggleButton
-    // case "file-upload":
-    //   return FileUploadField
-    // case "select":
-    //   return CustomSelect
-    // case "image-upload":
-    //   return ImageUpload
-    // case "color-picker":
-    //   return CustomColorField
-    // case "jsonEditor":
-    //   return JsonEditor
+    case "combobox":
+      return CustomCombobox;
     default:
       return Input;
   }

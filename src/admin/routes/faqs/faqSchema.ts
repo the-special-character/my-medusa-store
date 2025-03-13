@@ -1,11 +1,24 @@
 export const faqSchema = async () => {
   const res = await fetch(
-    `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`,
+    `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/faq-category`,
     {
       credentials: "include",
     }
   );
   const categoriesSchema = await res.json();
+  console.log({ categoriesSchema });
+
+  const optionsForCategory =
+    categoriesSchema &&
+    categoriesSchema.length > 0 &&
+    categoriesSchema?.faqs?.length > 0
+      ? categoriesSchema?.faqs[0]?.map((x: any) => ({
+          value: x.title,
+          label: x.title,
+          id: x.id,
+        }))
+      : [];
+  console.log({ optionsForCategory });
 
   const schema = {
     faqTitle: {
@@ -32,14 +45,21 @@ export const faqSchema = async () => {
         },
       },
     },
-    faqCategories: {
+    faqCategory: {
       label: "Faq Categories",
-      fieldType: "nested-select",
+      // fieldType: "nested-select",
+      fieldType: "combobox",
       props: {
-        options: categoriesSchema.faqs[0],
+        options: optionsForCategory,
+        // options: categoriesSchema.faqs[0],
         placeholder: "Select an Category...",
       },
-      validation: {},
+      validation: {
+        // required: {
+        //   value: true,
+        //   message: "Category is required",
+        // },
+      },
     },
   };
 

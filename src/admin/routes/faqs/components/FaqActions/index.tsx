@@ -20,7 +20,7 @@ const FaqActions = ({
       //   }
       // )
       const deleteFaqResponse = await fetch(
-        `${process.env.MEDUSA_BACKEND_URL}/admin/faq/${faqId}`,
+        `${process.env.MEDUSA_ADMIN_BACKEND_URL}/admin/faq/${faqId}`,
         {
           credentials: "include",
           method: "DELETE",

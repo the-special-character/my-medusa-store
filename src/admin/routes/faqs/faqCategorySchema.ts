@@ -1,12 +1,4 @@
 export const faqCategorySchema = async () => {
-  const res = await fetch(
-    `${process.env.MEDUSA_BACKEND_URL}/admin/faq/faq-category`,
-    {
-      credentials: "include",
-    }
-  );
-  const categoriesSchema = await res.json();
-
   const schema = {
     faqCategoryTitle: {
       label: "Faq Category Title",
