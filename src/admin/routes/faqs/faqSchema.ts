@@ -6,19 +6,17 @@ export const faqSchema = async () => {
     }
   );
   const categoriesSchema = await res.json();
-  console.log({ categoriesSchema });
 
   const optionsForCategory =
     categoriesSchema &&
-    categoriesSchema.length > 0 &&
-    categoriesSchema?.faqs?.length > 0
+    categoriesSchema?.faqs &&
+    categoriesSchema?.faqs[0].length > 0
       ? categoriesSchema?.faqs[0]?.map((x: any) => ({
           value: x.title,
           label: x.title,
           id: x.id,
         }))
       : [];
-  console.log({ optionsForCategory });
 
   const schema = {
     faqTitle: {
@@ -62,6 +60,7 @@ export const faqSchema = async () => {
       },
     },
   };
+  console.log({ schema });
 
   return schema;
 };

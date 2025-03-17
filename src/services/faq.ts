@@ -76,8 +76,6 @@ class FaqService extends TransactionBaseService {
 
         let faqCategory: FaqCategory;
 
-        console.log({ payloadcategory: payload.category_id });
-
         if (payload?.category_id) {
           const category = await faqCategoryRepository.findOne(
             buildQuery({
@@ -89,12 +87,8 @@ class FaqService extends TransactionBaseService {
               `FAQ Category with id ${payload.category_id} not found`
             );
           }
-          console.log({ category });
-
           faqCategory = category;
         }
-        console.log({ payload, faqCategory });
-
         const createdWishlist = faqRepository.create({
           ...payload,
           faqCategory,
@@ -132,7 +126,6 @@ class FaqService extends TransactionBaseService {
         const { category_id, ...faqData } = data;
 
         let faqCategory: FaqCategory;
-        console.log({ category_id });
 
         if (category_id) {
           const category = await faqCategoryRepository.findOne(
@@ -144,12 +137,8 @@ class FaqService extends TransactionBaseService {
           if (!category) {
             throw new Error(`FAQ Category with id ${category_id} not found`);
           }
-          console.log({ category });
-
           faqCategory = category;
-          console.log("faqCategory inside condition", faqCategory);
         }
-        console.log({ faqData, faqCategory });
 
         await faqRepository.update(id, { ...faqData, faqCategory });
 
